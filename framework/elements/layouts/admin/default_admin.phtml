@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+        <meta name="description" content="Kazinduzi - Open Source MVC framework coded in PHP"/>
+        <meta name="generator" content="Kazinduzi - open source web application framework"/>
+        <meta name="robots" content="all"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css"/>        
+        <link rel="stylesheet" href="/html/font-awesome/css/font-awesome.min.css"/>
+	<link rel="stylesheet" href="/html/simple-line-icons/simple-line-icons.min.css"/>
+	<link rel="stylesheet" href="/html/bootstrap/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="/html/bootstrap/css/bootstrap-responsive.min.css"/>
+	<link rel="stylesheet" href="/html/css/normalize.min.css">
+        <link rel="stylesheet" href="/html/css/style_responsive.css"/>
+        <link rel="stylesheet" href="/html/css/admin_style.css"/>
+	<link rel="stylesheet" href="/html/css/components.css"/>
+        <!-- Append Javascripts -->
+	<?php $this->appendStylesheets(); ?>  
+        <title><?php echo ucfirst(__h($title) . ' - ' . Kazinduzi::getAppName()) ?></title>
+        <script>var kazinduzi_token = encodeURIComponent('<?php echo $this->token; ?>');</script>
+        <script src="//code.jquery.com/jquery-latest.min.js"></script>
+        <script src="//code.jquery.com/ui/1.9.2/jquery-ui.min.js"></script>
+        <script src="/html/js/ckeditor/ckeditor.js"></script>
+        <script src="/html/js/ckeditor/adapters/jquery.js"></script>
+        <script src="/html/js/ckeditor/config.js"></script>
+        <script src="/html/js/app.js"></script>
+        <script src="/html/bootstrap/js/bootstrap.min.js"></script>
+        <!-- Append Javascripts -->
+	<?php $this->appendJavascripts(); ?>
+        <script>
+	    jQuery(document).ready(function() {
+		/* initiate layout and plugins */
+		App.init();
+		$.ajax({
+		    type: 'JSON',
+		    url: '/admin/modulemanager/get-backend-menu',
+		    data: '',
+		    success: function(data) {
+			$.each(data, function(i, elt) {
+			    console.log(elt);
+			    var listElt = $('<li/>').appendTo($('#module-manager > ul.sub'));
+			    var moduleLinkUrl = $('<a/>').attr({href: elt.url}).text(capitalize(elt.name) + ' module');
+			    moduleLinkUrl.appendTo(listElt);
+			});
+		    }
+		});
+	    });
+	    function capitalize(s) {
+		return s[0].toUpperCase() + s.slice(1);
+	    }
+        </script>
+    </head>
+    <body>
+        <div id="head">
+            <div class="logo">
+		<a href="/admin" style="color:#fff">
+		    <img src="/_themes/responsive/img/kazinduzi_logo.png" alt=""/><div class="logo-version">v<?php echo Kazinduzi::version(); ?></div>
+		</a>
+	    </div>        
+            <div class="right-header-profile">
+                <ul class="head-nav">
+                    <li><a href="/" target="_blank" style=""><i class="icon-share-alt"></i> <?php echo __('admin_menu.View Site');?></a></li>
+		    <?php if (TRUE === \Kazinduzi::User()->isAdmin()) :?>            
+    		    <li class="dropdown dropdown-left-responsive">
+    			<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-settings"></i> <?php echo __('admin_menu.System');?></a>
+    			<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+    			    <li><a id="system-refresh" href="javascript:void(0)" class="loading-on"><i class="icon-refresh"></i> <?php echo __('admin_menu.Refresh');?></a></li>
+    			    <li><a id="delete-caching-all" href="javascript:void(0);"><i class="icon-power"></i> <?php echo __('admin_menu.Clear all cache');?></a></li>
+    			    <li class="divider"></li>
+    			    <li><a href="/admin/settings"><i class="icon-wrench"></i> <?php echo __('admin_menu.App Settings');?></a></li>
+    			</ul>
+    		    </li>
+		    <?php endif; ?>		    
+		    <?php if (\Kazinduzi::User()->getId()) :?>
+    		    <li class="dropdown dropdown-left-responsive">
+			<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user"></i> <?php echo \Kazinduzi::User()->getFullname(); ?></a>
+    			<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+    			    <li><a href="/admin/user/view/<?php echo \Kazinduzi::User()->getId(); ?>" role="button" data-toggle="modal"><i class="icon-user"></i> <?php echo __('admin_menu.User Profile');?></a></li>
+    			    <li><a href="/login/logout"><i class="icon-logout"></i> <?php echo __('admin_menu.Log out');?></a></li>
+    			</ul>
+    		    </li>
+		    <?php endif; ?>
+                </ul>
+            </div>
+        </div>
+        <div id="container" class="row-fluid">
+            <div id="sidebar">
+                <ul>
+                    <li><a href="/admin/" title="dashboard"><i class="icon-home"></i>Dashboard</a></li>
+                    <li class="has-sub">
+                        <a href="javascript:void(0);" title="pages"><i class="icon-docs"></i>Pages<span class="arrow"></span></a>
+                        <ul class="sub">
+                            <li><a href="/admin/pages/create"><?php echo __('messages.new page'); ?></a></li>
+                            <li><a href="/admin/pages"><?php echo __('messages.all pages'); ?></a></li>
+                        </ul>
+                    </li>                    
+                    <li><a href="/admin/comments"> <i class="icon-bubbles"></i><?php echo __('Comment manager');?></a></li>
+                    <li><a href="/admin/library"> <i class="icon-picture"></i><?php echo __('Library manager');?></a></li>
+                    <li class="has-sub">
+			<a href="javascript:void(0);"><i class="icon-users"></i><?php echo __('People');?> <span class="arrow"></span></a>
+			<ul class="sub" id="">
+			    <li><a href="/admin/user"><?php echo __('Users manager');?></a></li>
+			    <li><a href="/admin/user/roles"><?php echo __('Roles manager');?></a></li>
+			    <li><a href="/admin/user/permissions"><?php echo __('Permissions manager');?></a></li>
+			</ul>
+		    </li>
+                    <li class="has-sub" id="module-manager">
+                        <a id="" href="javascript:void(0);"> <i class="icon-puzzle"></i><?php echo __('Modules manager');?><span class="arrow"></span></a>
+                        <ul class="sub" id="">
+                            <li><a href="/admin/modulemanager"></i><?php echo __('Overview');?></a></a></li>
+                        </ul>
+                    </li>
+                    <li><a href="/admin/widgetmanager"> <i class="icon-equalizer"></i><?php echo __('Widgets manager');?></a></li>
+                    <li><a href="/admin/thememanager"> <i class="icon-drawer"></i><?php echo __('Theme manager');?></a></li>
+                </ul>
+            </div>
+            <div id="wrap" class="clearfix">
+                <div id="main-holder" class="clearfix">
+		    <?php echo $content_for_layout ?>
+                </div>
+		<?php //echo render('footer');?>
+            </div>
+        </div>    
+        <script>
+	    $(document).ready(function() {
+		/* Topnav Dropdown menu.*/
+		$("#menu ul ul").css({display: "none"});
+		$("#menu li").hover(function() {
+		    $('ul li:first-child', this).before('');
+		    $('ul li:last-child', this).css('border-bottom', '0');
+		    $('ul li.arrow', this).css('border-bottom', '0');
+		    $(this).find('ul:first').css({visibility: "", display: "none"}).stop('true', 'true').slideDown(200);
+		}, function() {
+		    $(this).find('ul:first').slideUp("fast");
+		});
+	    });
+        </script>
+    </body>
+</html>

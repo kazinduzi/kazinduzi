@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en_US">
+<head>
+<meta charset="utf-8"/>
+<title><?php echo $title;?></title>
+<style type="text/css">
+body {
+    margin: 0;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 12px;
+    line-height: 20px;
+    color: #333333;
+    background-color: #ffffff;
+}
+#error-page-wrapper {
+    min-height: 100%;
+    padding-top: 170px;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+#error-page-wrapper .error-code {
+    display: block;
+    text-align: center;
+    font-size: 160px;
+    font-weight: 700;
+    color: #424F4F;
+    text-shadow: 0 1px 0 #ccc,0 2px 0 #c9c9c9,0 3px 0 #bbb,0 4px 0 #b9b9b9,0 5px 0 #aaa,0 6px 1px rgba(0,0,0,.1),0 0 5px rgba(0,0,0,.1),0 1px 3px rgba(0,0,0,.3),0 3px 5px rgba(0,0,0,.2),0 5px 10px rgba(0,0,0,.25),0 10px 10px rgba(0,0,0,.2),0 20px 20px rgba(0,0,0,.15);
+    width: 100%;
+    line-height: 160px;
+    height: 160px;
+}
+#error-page-wrapper .error-text, #error-page-wrapper .error-text-help {
+    text-align: center;
+    color: rgba(0,0,0,.6);
+    text-shadow: 2px 2px 6px rgba(0,0,0,.2),0 -5px 35px rgba(255,255,255,.3);
+}
+#error-page-wrapper .error-text {
+    margin-top: 100px;
+    font-size: 32px;
+    line-height: 35px;
+}
+#error-page-wrapper .error-text-help {
+    margin-top: 70px;
+    font-size: 14px;
+    line-height: 20px;
+}
+#error-page-wrapper .error-data{
+    text-align: center;
+}
+</style>
+
+</head>
+<body>
+	<!--[if lt IE 7]>
+        <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+    <![endif]-->
+    <!-- Start Error Page Wrapper -->
+    <div id="error-page-wrapper">
+        <div class="error-code"><?php echo $status;?></div>
+        <div class="error-data"><?php echo $body;?></div>
+        <div class="error-text-help">Oops!, The page you were requesting was not found on this system. <a href="/" rel="tooltip" data-placement="top" data-original-title="Home Page">Back To Home</a>.</div>
+    </div>
+    <!-- End Error Page Wrapper -->
+</body>
+</html>

@@ -1,0 +1,3 @@
+<FilesMatch ".*\.(php|(p)html|tpl)$">
+Deny from all
+</FilesMatch>

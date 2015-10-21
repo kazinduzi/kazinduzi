@@ -1,0 +1,472 @@
+/* Default
+-------------------------------------------------------------------------------*/
+html, body, body div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, figure, footer, header, hgroup, menu, nav, section, time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0 none;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
+abbr, acronym {
+    font-size: 85%;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+abbr[title], acronym[title], dfn[title] {
+    border-bottom: 1px dotted;
+    cursor: help;
+}
+object,embed {max-width: 100%;}
+/* force a vertical scrollbar to prevent a jumpy page */
+html {overflow-y: scroll;}
+/* we use a lot of ULs that aren't bulleted.
+	don't forget to restore the bullets within content. */
+ul {list-style: none;}
+blockquote, q {quotes: none;}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {content: ''; content: none;}
+a {margin: 0; padding: 0; font-size: 100%; vertical-align: baseline; background: transparent;}
+del {text-decoration: line-through;}
+abbr[title], dfn[title] {border-bottom: 1px dotted #000; cursor: help;}
+/* tables still need cellspacing="0" in the markup */
+table {border-collapse: collapse; border-spacing: 0;}
+th {font-weight: bold; vertical-align: bottom;}
+td {font-weight: normal; vertical-align: top;}
+hr {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; margin: 1em 0; padding: 0;}
+
+input, select {vertical-align: middle;}
+pre {
+	*white-space: pre; /* CSS2 */
+	*white-space: pre-wrap; /* CSS 2.1 */
+	*white-space: pre-line; /* CSS 3 (and 2.1 as well, actually) */
+	*word-wrap: break-word; /* IE */
+}
+input[type="radio"] {vertical-align: text-bottom;}
+input[type="checkbox"] {vertical-align: bottom; vertical-align: baseline;}
+/* End Default
+-------------------------------------------------------------------------------*/
+
+body, input, select, textarea, button {
+    font: 13px Helvetica, arial, freesans, clean, sans-serif;
+    line-height: 1.4;
+}
+.clearfix {display: block; clear: both;}
+.clearfix::before, .clearfix::after {
+    display: table;
+    line-height: 0;
+    content: "";
+}
+dl, hr, h1, h2, h3, h4, h5, h6, ol, ul, pre, table, address, fieldset {
+    margin: 15px 0;
+}
+h1{ font-size: 2.0em }
+h2{ font-size: 1.8em }
+h3{ font-size: 1.5em }
+img { border: medium none; vertical-align: baseline }
+.video-link img {
+    background: none repeat scroll 0 0 #EEEEEE;
+    border: medium none;
+    padding: 5px;
+    vertical-align: baseline;
+}
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+input, select, input[type="password"], textarea {
+    padding: 3px;
+    font-family: arial, tahoma;
+    font-size: 11pt;
+    border: 1px solid #BBB;
+}
+input[type=submit]{
+    -moz-border-radius: 3px;
+    background: -moz-linear-gradient(center top , #ffffff, #e0e0e0) repeat scroll 0 0 transparent;
+    font-weight: bold;
+    color: #3B6FBA;
+    padding: 6px 10px;
+    border: 1px solid #B1B6BB;
+    width: auto
+}
+input[type=submit]:hover{
+    background: -moz-linear-gradient(center top , #ffffff, #e9e9e9) repeat scroll 0 0 transparent;
+    color: #666;
+}
+#wrap {*min-width: 1000px; }
+#top {
+    background-color: rgb(100, 37, 75); height:120px;
+    background: rgb(19, 72, 97) repeat-x url(images/main-bg.gif) scroll 0 0;
+}
+#top .top {
+    margin: 0 auto;
+    text-align: left;
+    width: 940px;
+}
+#logo{
+    float: left;
+    width: 200px;
+    margin-top: 30px
+}
+.content {margin: 0 auto; text-align: left;width: 940px;}
+.content .content-in { padding: 35px 0 120px;}
+#content{ padding: 0; width: 940px; }
+#left{padding: 0 0 10px 0;}
+#menu {
+    float: right;
+    margin-top: 60px;
+}
+#menu ul {
+    background: none repeat scroll 0 0 transparent;
+    float: left;
+    margin: 0;
+    padding: 0 0.5em 0 0;
+}
+ul {list-style: none}
+ol {list-style: decimal outside none;}
+li {margin-left: 0;}
+#menu ul ul {
+    background: none repeat scroll 0 0 #27343C !important;
+    color: #fff;
+    display: none;
+    left: 0;
+    list-style: none outside none;
+    padding: 0;
+    position: absolute;
+    text-align: left;
+    top: 40px;
+    z-index: 910;
+}
+#menu ul ul li{
+   width: 200px !important;
+   margin: 0
+}
+#menu ul ul a{text-transform: none}
+#menu  ul ul ul{left:100%;top:0;}
+#menu  ul ul li{display:list-item; float:left;}
+#menu  ul ul li a{ *float: left; }
+#menu ul ul li a:hover{}
+#menu a:hover{ color: #bbb }
+#menu li{
+    display: block;
+    float: left;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    margin-left: 5px
+}
+#menu li:hover{
+    background: -moz-linear-gradient(center top , #269ACF 0%, #1581BF 100%) repeat scroll 0 0 transparent;
+    background-image: -webkit-gradient(
+                linear,
+                left bottom,
+                left top,
+                color-stop(0.0, #269ACF),
+                color-stop(1.0, #1581BF)
+            );
+
+    text-shadow : 1px 0 1px #000;
+    border-radius: 0px;
+    margin: 0
+}
+#menu li.first a {border-left: 0 none;}
+#menu .current{
+    text-shadow : 1px 0 1px #000;
+    background-color: #0189BB;
+    background-image: -moz-linear-gradient(center top , #269ACF, #1581BF);
+    background-image: -webkit-gradient(
+                linear,
+                left bottom,
+                left top,
+                color-stop(0.0, #269ACF),
+                color-stop(1.0, #1581BF)
+            );
+
+    border-radius: 0px;
+    color: #fff;
+}
+#menu li a {
+    color: #efefef;
+    display: block;
+    font-size: 90%;
+    height: 32px;
+    letter-spacing: 0.05em;
+    line-height: 32px;
+    padding: 0 0.9em;
+    text-decoration: none;
+    text-transform: uppercase;
+
+
+
+}
+#menu li a:hover{
+    color: #fff;
+}
+#main-holder{
+    min-height: 400px;
+}
+#nav {background-color:#F4F4F4; width: 100%; margin: 0 0 15px;  float: left }
+#nav li{display: inline-block; margin: 0; font-weight: bold; float: left}
+#nav li a{ padding: 4px 9px; *float: left}
+#nav li span.separator{ float: left; margin-top: 5px; color: #ccc; }
+
+#crumbs {
+    width: 100%;
+}
+#crumbs .container {
+    width: 940px;
+    margin: 0 auto;
+}
+#crumbs .container ul {
+    padding: 0px;
+}
+#crumbs .container li {
+    display: inline;
+    margin: 0;
+}
+a {color:#1581BF; text-decoration: none;}
+a {padding: 0.3em 0 0.1em; position: relative;}
+a:hover {text-decoration: underline}
+#content p {}
+.intro{
+    float: left;
+    margin-bottom: 20px;
+    padding-bottom: 30px;
+    background: transparent url('images/bottom-separator.png') no-repeat scroll center bottom;
+}
+.intro .img-code {
+    border: 1px solid #ddd;
+    float: right;
+    margin-left: 40px;
+    padding: 4px;
+}
+.intro span.download-area {
+    background: url('images/download.png') no-repeat center left #F4FAF5;
+    float: left;
+    width: 230px;
+    min-height: 70px;
+    display: block;
+    /* margin-top: 40px; */
+    padding-left: 70px;
+    border: 1px solid #ddd;
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+    border-radius:3px;
+
+}
+.intro a {color: #666;}
+.intro a:hover {color: #3B6FBA;}
+
+.intro .latest {
+    margin: 20px 0 10px;
+}
+span.latest {
+    font-size: 1.5em;
+    font-weight: bold;
+    float: left;
+}
+.download-area strong {
+     font-size: 1.5em;
+     font-weight: bold !important;
+}
+.download-area strong.version {
+    float: left;
+    color: #777;
+    font-size: .9em;
+    margin-top: 5px;
+    font-weight: normal !important
+}
+.count-downloads {
+    font-size: 1.2em;
+}
+.download-area img {
+     float: left;
+     width:auto
+}
+.intro strong {
+    font-weight: normal
+}
+.left {width: 700px; padding: 0 0 10px 0; float: left; overflow: hidden;}
+.right {width: 220px; float: right; min-height: 200px;}
+#footer-wrap { 
+    background: #111517 url(images/grain-texture.png) repeat bottom;
+    clear: both;
+    border-bottom: 1px solid #333;
+    font-size: 13px
+}
+.footer {width: 940px; margin: 0 auto; color: #777; padding: 10px 0;}
+#copyright {background: none repeat scroll 0 0 #232425; color: #999;font-size: 11px; margin: auto;padding: 10px 0; text-align: center; width: 100%;}
+.copyright {width: 940px; margin: 0 auto;}
+.copyright a {color: #ddd; text-shadow: 0 -1px 0 #000;}
+.copyright a:hover {color:#999;}
+
+#powered a {color: #0099CC;}
+div.form label {
+    display: block;
+    font-size: 0.75em;
+    font-weight: bold;
+    color: #777;
+    text-transform: uppercase;
+}
+div.form span.required {
+    color: red;
+}
+
+.layout-main-shortcuts {
+    background: none repeat scroll 0 0 #EEEEEE;
+    border-bottom: 1px solid #DDDDDD;
+    line-height: 1em;
+    font-size: 10pt;
+    margin: 0 auto;
+    padding: 3px 0;
+    text-align: right;
+}
+.layout-main-shortcuts .container_12 {
+    width: 940px;
+    margin: 0 auto;
+}
+.container_12 a {color:#444}
+
+.fast {
+    color: #D8582B;
+}
+.secure {
+    color: #75aa00;
+}
+.professional {
+    color: #3B6FBA;
+    color:#0E9CCF;
+    /*
+    color: #C26C6C;
+    color: #AC4A4A;
+    */
+}
+.last {margin-right: 0; border-right-width: 0;}
+/***/
+.latest-news {float: left; width: 595px;}
+
+.latest-news *, .about-me * {margin: 0}
+.about-me h2, .latest-news h2 {color: #ddd; margin: 0 0 10px;}
+.latest-news h2 span, .latest-news h2 span a {font-weight: normal; color: #555555; font-size: 11pt; float: left; width: 100%; margin-bottom: 10px; }
+.latest-news h4 a {color: #bbb; font-weight: normal;}
+.latest-news h4 a:hover {text-decoration: underline; color: #eee;}
+.latest-news li {border-bottom: 1px dotted #555;}
+.latest-news li:last-child {border-bottom: 0}
+.latest-news li span.date {}
+.latest-news a.read-more-news {float: left; margin-top: 5px; color: #09c;}
+.latest-news a.read-more-news:hover {text-decoration: underline;}
+.about-me {float:right; color: #888; width: 300px;}
+.four_column {
+    list-style-type: none;
+    margin: 15px 0;
+    padding: 0;
+    float: left;
+}
+.four_column li {
+    float: left;
+    list-style-type: none;
+    margin-right: 4%;
+    margin-left: 0;
+    width: 30%;
+}
+.four_column li h3 {margin: 25px 0 0; font-size: 1.4em}
+.four_column li p {margin: 0 0 5px 0}
+.four_column li p {float: left}
+.four_column li.last {margin-right:0}
+
+.alignleft, img.alignleft {
+    display: inline;
+    float: left;
+    margin-right: 7px;
+    margin-top: 3px;
+}
+.content-home {}
+
+.content-home h2 {font-size: 1.5em;}
+.content-home .howto {
+    margin-top: 10px
+}
+
+.firewall {color: #680000;}
+.accept {color: #75aa00;}
+.process {color:#777;}
+
+.separator-bottom {
+    background: transparent url('images/bottom-separator.png') no-repeat bottom center scroll;
+    height: 40px;
+    margin-bottom:1px
+}
+code {color:#900; font-size: 12pt;}
+
+/* Blog css */
+.blog-entry {
+    margin-bottom: 10px; 
+    border-bottom: 1px dashed #CECED3;
+    margin-bottom: 10px;
+    padding: 0 0 10px;
+    float:left;
+}
+h2.entry-title {margin: 5px 0 0;}
+.blog-entry .entry-date {
+    background: url('images/strip-line.gif') repeat scroll transparent center;
+    font-size: 9pt;
+    margin: 0 0 10px;
+    padding: 4px
+}
+.form {margin-top: 25px;}
+.form p {margin-bottom: 15px}
+.form h2 {font-size: 15pt; margin: 0 0 10px;}
+.form p.note {font-size: 10pt; color:#999}
+
+.form input[type=text],.form textarea {
+    width: 92%;
+    padding: 5px;
+    overflow: auto;
+}
+
+table {border:1px solid #aaa; border-bottom-width: 0}
+th {background-color: #e0e0e2; font-weight: normal; padding: 3px; color: #555;}
+tr td { border-bottom: 1px solid #aaa;} 
+td {padding: 2px 6px;}
+.video-tutorial {
+    border: 1px solid #aaa; -moz-border-radius:5px; -webkit-border-radius:5px;  float: left; border-width: 0
+}
+.title-video {
+    margin-bottom: 6px;
+}
+.video-link {float: left; margin-right: 10px;}
+
+form p {margin-bottom: 18px;}
+
+.imgleft {
+    float: left;
+    margin: 5px 12px 0 0;
+    padding:5px;
+    border:1px solid #ccc;
+    box-shadow: 0 1px 5px #999;
+}
+.imgleft:hover {
+    box-shadow: 0 1px 5px #bbb;
+}
+.read-more {
+    width: 100%;
+    float: left;
+}
+.read-more a {text-align: right; float: right;}
+
+.header {
+    font-weight: normal;
+    font-size: 24px;
+    display: block;
+    *margin: 13px 0px 8px 0px;
+    *padding: 9px 15px 4px 0;
+    line-height: 30px;
+}
+/* CKEditor */
+.cke_dialog_ui_checkbox {
+    margin-top: 15px !important;
+    display: block;
+}

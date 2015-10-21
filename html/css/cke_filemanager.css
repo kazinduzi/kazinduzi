@@ -1,0 +1,141 @@
+html, body { 
+    height: 100%;
+}
+body {
+	padding: 0;
+	margin: 0;
+	background: #F7F7F7;
+	font-family: "Open Sans", sans-serif, arial;
+	font-size: 13px;
+	line-height: 1.42857143;
+}
+img {
+	border: 0;
+}
+#container {	
+	height:100vh;
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* Opera/IE 8+ */ 
+	background: #e5e5e5; 
+	padding: 1em; 
+}
+#menu {
+	clear: both;	
+	margin-bottom: 3px;
+	display: inline-block;
+	width: 100%;
+	min-height: 2em;
+}
+#column-left {
+	background: #fff;	
+	float: left;
+	width: 20.5%;	
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* Opera/IE 8+ */
+}
+#column-right {
+	background: #fff;	
+	float: right;
+	width: 78%;
+	text-align: center;	
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* Opera/IE 8+ */
+}
+
+#column-left,
+#column-right {
+    padding: .4em;
+    height: 91.4%;
+}
+
+#column-right div {
+	text-align: left;	
+	height: 100%;	
+}
+#column-right a {
+	display: inline-block;
+	text-align: center;
+	border: 1px solid #eee;
+	cursor: pointer;
+	margin: 5px;
+	padding: 5px;
+	vertical-align: middle;
+	height: 140px;
+	width: 100px;
+	background-color: #fff
+}
+#column-right a img{
+    max-width: 100px;
+    max-height: 100px;
+}
+#column-right a.selected, #column-right a:hover {
+	border: 1px solid #adf;
+	background-color: #eff1ff;
+}
+#column-right input {
+	display: none;
+}
+#dialog {
+	display: none;
+}
+.btn {
+	display: block;
+	float: left;
+	padding: 8px 5px 8px 8px;
+	margin-right: 5px;
+	background-position: 5px 6px;
+	background-repeat: no-repeat;
+	cursor: pointer;
+	line-height: 1.5em;
+}
+.btn.hover,
+.btn:hover {
+	background-color: #ccc;
+}
+.thumb {
+	padding: 5px;
+	width: 105px;
+	height: 105px;
+	background: #f7f7f7;
+	border: 1px solid #ccc;
+	cursor: pointer;
+	cursor: move;
+	position: relative;
+}
+
+.btn:before {
+    padding-right: .3em;
+    font-size: 1.3em;
+    color:#777
+}
+.btn.create:before {
+    font-family: FontAwesome;
+    content: "\f07b";
+}
+.btn.move:before {
+    font-family: FontAwesome;
+    content: "\f0c4";
+}
+.btn.copy:before {
+    font-family: FontAwesome;
+    content: "\f0c5";
+}
+.btn.rename:before {
+    font-family: FontAwesome;
+    content: "\f14b";
+}
+.btn.upload:before {
+    font-family: FontAwesome;
+    content: "\f093";
+}
+.btn.delete:before {
+    font-family: FontAwesome;
+    content: "\f1f8";
+}
+.btn.refresh:before {
+    font-family: FontAwesome;
+    content: "\f021";
+}
