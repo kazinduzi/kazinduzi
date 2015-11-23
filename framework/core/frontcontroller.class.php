@@ -58,6 +58,65 @@ class FrontController
 	    }
 	}
     }
+    
+    /**
+     * Parse the enveronment/server REQUEST_URI into routing
+     * 
+     * @return string
+     */
+    private function parseRequestUri()
+    {
+        $serverParams = $this->Request->serverParams();
+        
+        if (!isset($serverParams['REQUEST_URI'], $serverParams['SCRIPT_NAME'])) {
+            return '';
+        }
+        $requestUriSegments = parse_url('http://dummy' . $serverParams['REQUEST_URI']);
+        
+        $query = isset($requestUriSegments['query']) ? $requestUriSegments['query'] : '';
+        $uri = isset($requestUriSegments['path']) ? $requestUriSegments['path'] : '';
+        
+        if (isset($serverParams['SCRIPT_NAME'][0])) {
+            if (strpos($uri, $serverParams['SCRIPT_NAME']) === 0) {
+                $uri = (string)substr($uri, strlen($serverParams['SCRIPT_NAME']));
+            } elseif (strpos($uri, dirname($serverParams['SCRIPT_NAME'])) === 0) {
+                $uri = (string)substr($uri, strlen(dirname($serverParams['SCRIPT_NAME'])));
+            }
+        }
+        // This section ensures that even on servers that require the URI to be in the query string (Nginx) a correct
+        // URI is found, and also fixes the QUERY_STRING server var and $_GET array.
+        if (trim($uri, '/') === '' && strncmp($query, '/', 1) === 0) {
+            $query = explode('?', $query, 2);
+            $uri = $query[0];
+            $serverParams['QUERY_STRING'] = isset($query[1]) ? $query[1] : '';
+        } else {
+            $serverParams['QUERY_STRING'] = $query;
+        }
+        parse_str($serverParams['QUERY_STRING'], $_GET);
+        if ($uri === '/' || $uri === '') {
+            return '/';
+        }
+        
+        // Do some final sanitizing of the URI and return it
+        return $this->sanitizeRelativeDirectory($uri);
+    }
+    
+    /**
+     * 
+     * @param type $uri
+     * @return type
+     */
+    private function sanitizeRelativeDirectory($uri) {
+        $tok = strtok($uri, '/');
+        $uri = [];        
+        while ($tok !== FALSE) {
+            if ((!empty($tok) || $tok === '0') && $tok !== '..') {
+                $uri[] = $tok;
+            }
+            $tok = strtok('/');
+        }
+        return implode('/', $uri);
+    }
 
     /**
      *
@@ -88,12 +147,8 @@ class FrontController
 	/**
 	 * Extract the uri_path in the $_SERVER['REQUEST_URI'] from the requested URL
 	 */
-	if (null != $this->Request->serverParam('REQUEST_URI')) {
-	    $route = strtok($this->Request->serverParam('REQUEST_URI'), '?');
-	}
-	if (!isset($route) && $this->Request->getParam('rt')) {
-	    $route = $this->Request->getParam('rt');
-	}
+        $route = $this->parseRequestUri();                
+
 	if (isset($route)) {
 	    $route = str_replace(array('//', '../'), '/', trim($route, '/'));
 	    $routeParts = array_filter(explode('/', rtrim($route, '/')));

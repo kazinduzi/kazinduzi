@@ -30,6 +30,7 @@ Options +FollowSymLinks
     # Protect accessing our most important
     RewriteCond $1 !^(index\.php|database|core|elements|helpers|includes|library|application|robots\.txt)
 
+    RewriteRule ^index\.php$ - [L]
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)$ /index.php/$1 [L,QSA]
