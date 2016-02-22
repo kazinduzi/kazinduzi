@@ -10,6 +10,9 @@ defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
  * @package   Kazinduzi
  */
 
+use Kazinduzi\Core\Controller;
+use Kazinduzi;
+
 class DefaultController extends Controller 
 {     
     /**
@@ -28,7 +31,15 @@ class DefaultController extends Controller
     public function index() 
     {        
         $this->title = __('messages.welcome');        
-        $this->content = 'Welcome to Kazinduzi framework v' . \Kazinduzi::version();        
+        $this->content = 'Welcome to Kazinduzi framework v' . Kazinduzi::version();        
+    }
+    
+    public function test()
+    {
+        $data = ['token' => bin2hex(openssl_random_pseudo_bytes(16))];
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        die();
     }
     
 }

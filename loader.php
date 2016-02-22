@@ -2,7 +2,13 @@
 
 defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
 
-final class Autoloader
+if (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require __DIR__ . '/vendor/autoload.php';
+}
+
+
+
+final class Classloader
 {
 
     /**
@@ -75,7 +81,7 @@ final class Autoloader
      * @param string $className
      * @return void
      */
-    public function autoloader_psr0($className)
+    public function psr0($className)
     {
 	$className = ltrim($className, '\\');
 	$fileName = '';
@@ -87,13 +93,22 @@ final class Autoloader
 	}
 	$fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
 	include $fileName;
-    }
-
+    }    
+    
 }
 
 spl_autoload_register(null, false);
 spl_autoload_extensions('.php');
-spl_autoload_register(array(new Autoloader, 'register'));
-spl_autoload_register(array(new Autoloader, 'autoloader_psr0'));
+spl_autoload_register(array(new Classloader, 'register'));
+spl_autoload_register(array(new Classloader, 'psr0'));
 ini_set('unserialize_callback_func', 'spl_autoload_call');
 
+
+# Kazinduzi ClassLoader
+require __DIR__ . '/Autoload/src/Autoloader.php';
+$autoloader = new \Kazinduzi\Autoload\Autoloader();
+$autoloader->addPrefix('Kazinduzi\\Core', 'framework/Core');
+$autoloader->addPrefix('Kazinduzi\\Db', 'framework/Db');
+$autoloader->addPrefix('Kazinduzi\\Session', 'framework/Session/src');
+$autoloader->addPrefix('Kazinduzi\\Cache', 'framework/Cache');
+$autoloader->register(true);

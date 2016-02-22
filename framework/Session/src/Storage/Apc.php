@@ -1,4 +1,7 @@
-<?php defined('KAZINDUZI_PATH') or die('No direct access script allowed');
+<?php
+namespace Kazinduzi\Session\Storage;
+
+defined('KAZINDUZI_PATH') or die('No direct access script allowed');
 /**
  * Kazinduzi Framework (http://framework.kazinduzi.com/)
  *
@@ -13,7 +16,11 @@
  *
  * @see http://www.php.net/manual/en/function.session-set-save-handler.php
  */
-final class SessionApc extends Session {
+
+use Kazinduzi\Session\Session;
+use Kazinduzi\Core\Request;
+
+final class Apc extends Session {
    /**
     * Constructor
     *

@@ -1,4 +1,7 @@
-<?php defined('KAZINDUZI_PATH') or die('No direct access script allowed');
+<?php
+namespace Kazinduzi\Session\Storage;
+
+defined('KAZINDUZI_PATH') or die('No direct access script allowed');
 /**
  * Kazinduzi Framework (http://framework.kazinduzi.com/)
  *
@@ -8,12 +11,11 @@
  * @license   http://kazinduzi.com/page/license MIT License
  * @package   Kazinduzi
  */
-/**
- * Memcache session storage handler for PHP
- *
- * @see http://www.php.net/manual/en/function.session-set-save-handler.php
- */
-final class SessionMemcache extends Session
+
+use Kazinduzi\Session\Session;
+use Kazinduzi\Core\Request;
+
+final class Memcache extends Session
 {
     /**
      *

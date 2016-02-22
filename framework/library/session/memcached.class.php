@@ -41,11 +41,11 @@ final class SessionMemcached extends Session
         
         // If the client 'User-Agent' is not set from the DB session, we fetch the new one from the client request
         if (!$this->ua){
-            $this->ua = \Request::getInstance()->user_agent();
+            $this->ua = Request::getInstance()->user_agent();
         }
         // If the client IP-Address is not set from the DB session, we fetch the new one from the client request
         if (!$this->ip){
-            $this->ip = \Request::getInstance()->ip_address();
+            $this->ip = Request::getInstance()->ip_address();
         }
     }
 

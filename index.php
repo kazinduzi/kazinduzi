@@ -75,3 +75,61 @@ if (is_file(__DIR__ . '/INSTALL_LOCK')) {
 $session = Kazinduzi::session();
 $session->start();
 require_once APP_PATH . DIRECTORY_SEPARATOR . 'bootstrap.php';
+
+
+$db = \Kazinduzi\Db\Database::getInstance();
+$db->select('*')->from('kazinduzi')->where('ip_adress = \'192.168.1.28\'')->buildQuery();
+echo $db->getQueryString();
+
+$sess = Kazinduzi\Session\Session::instance();
+var_dump($sess->getId());
+
+# Testing Memcached Caching
+try {
+    $memcached = new Memcached;
+    $memcached->addServer('127.0.0.1', 11211);
+    $cache = new Kazinduzi\Cache\MemcachedCache();
+    $cache->setMemcached($memcached);
+    $cache->setNamespace('Memcached');
+    $cache->persist('timestamp', new \DateTime('now'), 3600);
+    $cache->persist('sess', $sess, 3600);
+    $cache->persistMultiple([
+        'test 1' => range(1, 10), 
+        'test 2' => 'Hello World']
+    );
+    var_dump(
+            $cache->fetchMultiple(['test 1', 'test 2']), 
+            $cache->getStats()
+    ); 
+    
+} catch (Exception $e){
+    print_r($e);
+}
+
+# Test APC Caching
+try {
+    $apcCache = new Kazinduzi\Cache\ApcCache();
+    $apcCache->setNamespace('demo');
+    $apcCache->persist('timestamp', new DateTime('now'), 3600);
+    $apcCache->persistMultiple(['test 1' => range(1, 10), 'test 2' => new stdClass()]);
+    var_dump($apcCache->fetch('test 1'));
+} catch (Exception $e) {
+    print_r($e);
+}
+
+
+# Test File Caching
+try {    
+    $directory = __DIR__ . '/application/cache';
+    $fileCache = new Kazinduzi\Cache\FileCache($directory);
+    $fileCache->setNamespace('Filesystem');
+    $fileCache->persist('timestamp', new DateTime('now'), 3600);
+    $fileCache->persist('sess', $sess, 3600);
+    $fileCache->persistMultiple(['test 1' => range(1, 100), 'test 2' => new stdClass()]);    
+    $fileCache->delete('sess');
+    var_dump($fileCache->fetch('timestamp'));
+    var_dump($fileCache->getDirectory()->getPathname());
+    
+} catch (Exception $e){
+    print_r($e);
+}

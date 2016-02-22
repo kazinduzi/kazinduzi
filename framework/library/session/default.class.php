@@ -18,10 +18,10 @@ final class SessionDefault extends Session {
     public function __construct($configs = null) {
         $configs = !isset($configs) ? self::$configs : $configs;
         if (!$this->ua){
-            $this->ua = \Request::getInstance()->user_agent();
+            $this->ua = Request::getInstance()->user_agent();
         }
         if (!$this->ip){
-            $this->ip = \Request::getInstance()->ip_address();
+            $this->ip = Request::getInstance()->ip_address();
         }
     }
 }

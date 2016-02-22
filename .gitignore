@@ -3,3 +3,6 @@ html/images/*
 html/thumbs/
 html/media/*
 html/cache/*
+
+/vendor/
+/PHPWord/nbproject/private/

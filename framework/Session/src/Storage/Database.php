@@ -1,4 +1,6 @@
-<?php defined('KAZINDUZI_PATH') or die('No direct access script allowed');
+<?php namespace Kazinduzi\Session\Storage;
+
+defined('KAZINDUZI_PATH') or die('No direct access script allowed');
 /**
  * Kazinduzi Framework (http://framework.kazinduzi.com/)
  *
@@ -14,7 +16,10 @@
  * @author Emmanuel_Leonie
  */
 
-final class SessionDatabase extends Session 
+use Kazinduzi\Session\Session;
+use Kazinduzi\Core\Request;
+
+final class Database extends Session 
 {
     
     const TABLE_PRIMARY_KEY_LENGTH = 128;
@@ -162,8 +167,8 @@ final class SessionDatabase extends Session
         // http://us.php.net/manual/en/function.session-set-save-handler.php
         try {
 	    $data = $this->getDbo()->real_escape_string($data);
-	    $userAgent = $this->getDbo()->real_escape_string(\Request::getInstance()->user_agent());
-	    $ipAddress = $this->getDbo()->real_escape_string(\Request::getInstance()->ip_address());
+	    $userAgent = $this->getDbo()->real_escape_string(Request::getInstance()->user_agent());
+	    $ipAddress = $this->getDbo()->real_escape_string(Request::getInstance()->ip_address());
             $sql = sprintf("INSERT INTO `%s` (id, data, expire, ip_address, user_agent) VALUES ('%s', '%s', %s, '%s', '%s')", $this->sessionTableName, $id, $data, time() + $this->getTimeout(), $ipAddress, $userAgent) . " ON DUPLICATE KEY UPDATE `data` ='{$data}'";
             $this->getDbo()->setQuery($sql);
             $this->getDbo()->execute();

@@ -10,6 +10,17 @@
  */
 sanitize_input();
 Kazinduzi::init();
-require CORE_PATH . DIRECTORY_SEPARATOR . 'dispatcher.class.php';
-$dispatcher = new Dispatcher();
+
+$container = new \Pimple\Container();
+$container['db'] = function() {
+    return Kazinduzi::db();
+};
+$container['session'] = function() {
+    return Kazinduzi::session();
+};
+$container['cache'] = function() {
+    return Kazinduzi::cache();
+};
+
+$dispatcher = new \Kazinduzi\Core\Dispatcher($container);
 $dispatcher->dispatch();

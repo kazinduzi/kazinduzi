@@ -1,4 +1,7 @@
-<?php defined('KAZINDUZI_PATH') or die('No direct access script allowed');
+<?php
+namespace Kazinduzi\Session\Storage;
+
+defined('KAZINDUZI_PATH') or die('No direct access script allowed');
 /**
  * Kazinduzi Framework (http://framework.kazinduzi.com/)
  *
@@ -8,24 +11,23 @@
  * @license   http://kazinduzi.com/page/license MIT License
  * @package   Kazinduzi
  */
-/**
- * Memcache session storage handler for PHP
- *
- * @see http://www.php.net/manual/en/function.session-set-save-handler.php
- */
-final class SessionMemcache extends Session
+
+use Kazinduzi\Session\Session;
+use Kazinduzi\Core\Request;
+
+final class Memcached extends Session
 {
     /**
      *
      * @var type
      */
-    protected  static $memcache;
+    protected  static $memcached;
 
     /**
      *
      * @var type
      */
-    protected static $_flag;
+    protected static $_flag = false;
 
     /**
      * Constructor
@@ -34,23 +36,17 @@ final class SessionMemcache extends Session
      * @param array $options optional parameters
      */
     public function __construct(array $configs = null) {
-        if (!(extension_loaded('memcache') && class_exists('Memcache'))) {
-            throw new \Exception('Memcache PHP extention not loaded');
+        if (!extension_loaded('memcached')) {
+                throw new Exception('Memcached PHP extention not loaded');
         }
         $configs = isset($configs) ? $configs : self::$configs;
-        // Setup the flag
-        if ($configs['compression']) {
-            self::$_flag = MEMCACHE_COMPRESSED;
-        } else {
-            self::$_flag = 0;
-        }
         
         // If the client 'User-Agent' is not set from the DB session, we fetch the new one from the client request
-        if (!$this->ua) {
+        if (!$this->ua){
             $this->ua = Request::getInstance()->user_agent();
         }
         // If the client IP-Address is not set from the DB session, we fetch the new one from the client request
-        if (!$this->ip) {
+        if (!$this->ip){
             $this->ip = Request::getInstance()->ip_address();
         }
     }
@@ -64,28 +60,23 @@ final class SessionMemcache extends Session
     }
 
     /**
-	 * Open the SessionHandler backend.
-	 *
-	 * @access public
-	 * @param string $save_path	The path to the session object.
-	 * @param string $session_name  The name of the session.
-	 * @return boolean  True on success, false otherwise.
-	 */
-	public function openSession($save_path, $session_name) {
-		self::$memcache = new Memcache;
-		foreach (self::$configs['servers'] as $server) {
-			if (!$server) {
-                throw new Exception('No Memcache servers defined in configuration');
+        * Open the SessionHandler backend.
+        *
+        * @access public
+        * @param string $save_path	The path to the session object.
+        * @param string $session_name  The name of the session.
+        * @return boolean  True on success, false otherwise.
+        */
+       public function openSession($save_path, $session_name) {
+            self::$memcached = new \Memcached();
+            foreach (self::$configs['servers'] as $server) {
+                if (!$server) {
+                    throw new \Exception('No Memcached servers defined in configuration');
+                }                
+                self::$memcached->addServer($server['host'], $server['port']);                
             }
-            if (self::$configs['compatibility']) {
-                // No status for compatibility mode (#ZF-5887)
-                self::$memcache->addServer($server['host'], $server['port'], $server['persistent'], $server['weight'], $server['timeout'], $server['retry_interval']);
-            } else {
-                self::$memcache->addServer($server['host'], $server['port'], $server['persistent'], $server['weight'], $server['timeout'], $server['retry_interval'], $server['status'], $server['failure_callback']);
-            }
-		}
-		return true;
-	}
+            return true;
+       }
 
 	/**
 	 * Close the SessionHandler backend.
@@ -94,7 +85,7 @@ final class SessionMemcache extends Session
 	 * @return boolean  True on success, false otherwise.
 	 */
 	public function closeSession() {
-		return self::$memcache->close();
+		return self::$memcached->quit();
 	}
 
 	/**
@@ -108,7 +99,7 @@ final class SessionMemcache extends Session
 	public function readSession($id) {
 		$id = 'sess_'.$id;
 		$this->_setExpire($id);
-		return self::$memcache->get($id);
+		return self::$memcached->get($id);
 	}
 
     /**
@@ -121,15 +112,16 @@ final class SessionMemcache extends Session
 	 */
 	public function writeSession($id, $data) {
 		$id = 'sess_'.$id;
-		if (self::$memcache->get($id.'_expire')) {
-			self::$memcache->replace($id.'_expire', time(), 0);
+		if (self::$memcached->get($id.'_expire')) {
+                    self::$memcached->replace($id.'_expire', time());
 		} else {
-			self::$memcache->set($id.'_expire', time(), 0);
+                    self::$memcached->set($id.'_expire', time());
 		}
-		if (self::$memcache->get($id)) {
-			self::$memcache->replace($id, $data, self::$_flag);
+                
+		if (self::$memcached->get($id)) {
+                    self::$memcached->replace($id, $data);
 		} else {
-			self::$memcache->set($id, $data, self::$_flag);
+                    self::$memcached->set($id, $data);
 		}
 		return;
 	}
@@ -144,8 +136,8 @@ final class SessionMemcache extends Session
 	 */
 	public function destroySession($id)	{
 		$id = 'sess_'.$id;
-		self::$memcache->delete($id.'_expire');
-		return self::$memcache->delete($id);
+		self::$memcached->delete($id.'_expire');
+		return self::$memcached->delete($id);
 	}
 
     /**
@@ -165,12 +157,12 @@ final class SessionMemcache extends Session
      */
     private function _setExpire($key) {
 		$lifetime = ini_get("session.gc_maxlifetime");
-		$expire = self::$memcache->get($key.'_expire');
+		$expire = self::$memcached->get($key.'_expire');
 		if ($expire + $lifetime < time()) {
-			self::$memcache->delete($key);
-			self::$memcache->delete($key.'_expire');
+			self::$memcached->delete($key);
+			self::$memcached->delete($key.'_expire');
 		} else {
-			self::$memcache->replace($key.'_expire', time());
+			self::$memcached->replace($key.'_expire', time());
 		}
 	}
 
