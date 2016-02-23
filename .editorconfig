@@ -1,10 +1,36 @@
-; top-most EditorConfig file
+# This file is for unifying the coding style for different editors and IDEs
+# editorconfig.org
+
 root = true
 
-; Unix-style newlines
 [*]
-end_of_line = LF
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
 
-[*.php]
+# Spaces in coffee
+[**.coffee]
+indent_style = space
+indent_size = 2
+
+[**.js]
+indent_style = space
+indent_size = 2
+
+# Tabs in less
+[**.less]
+indent_style = tab
+indent_size = 2
+
+[**.css]
+indent_style = tab
+indent_size = 2
+
+[**.php]
 indent_style = space
 indent_size = 4
+
+[**.html]
+indent_style = tab
+indent_size = 2
