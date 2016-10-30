@@ -1,40 +1,40 @@
 <?php
+
 namespace Kazinduzi\Autoload;
 
 /**
- * Description of Autoloader
+ * Description of Autoloader.
  *
  * @author Emmanuel
  */
 class Autoloader
 {
-    
     protected $class_files = [];
     protected $debug = [];
     protected $loaded_classes = [];
     protected $prefixes = [];
-    
-    
+
+
     /**
      * Register autoloader with SPL.
      *
      * @param bool $prepend True to prepend to the autoload stack.
+     *
      * @return null
      */
     public function register($prepend = false)
     {
-        spl_autoload_register(array($this, 'loadClass'), true, (bool)$prepend);
+        spl_autoload_register([$this, 'loadClass'], true, (bool) $prepend);
     }
-    
+
     /**
      * Unregisters this autoloader from SPL.
      *
      * @return null
-     *
      */
     public function unregister()
     {
-        spl_autoload_unregister(array($this, 'loadClass'));
+        spl_autoload_unregister([$this, 'loadClass']);
     }
 
     /**
@@ -47,35 +47,33 @@ class Autoloader
     {
         return $this->debug;
     }
-    
+
     /**
      * Adds a base directory for a namespace prefix.
      *
-     * @param string $prefix The namespace prefix.
-     *
+     * @param string       $prefix    The namespace prefix.
      * @param string|array $base_dirs One or more base directories for the
-     * namespace prefix.
-     *
-     * @param bool $prepend If true, prepend the base directories to the
-     * prefix instead of appending them; this causes them to be searched
-     * first rather than last.
+     *                                namespace prefix.
+     * @param bool         $prepend   If true, prepend the base directories to the
+     *                                prefix instead of appending them; this causes them to be searched
+     *                                first rather than last.
      *
      * @return null
      */
     public function addPrefix($prefix, $base_dirs, $prepend = false)
     {
         // normalize the namespace prefix
-        $prefix = trim($prefix, '\\') . '\\';
+        $prefix = trim($prefix, '\\').'\\';
 
         // initialize the namespace prefix array if needed
-        if (! isset($this->prefixes[$prefix])) {
-            $this->prefixes[$prefix] = array();
+        if (!isset($this->prefixes[$prefix])) {
+            $this->prefixes[$prefix] = [];
         }
 
         // normalize each base dir with a trailing separator
-        $base_dirs = (array)$base_dirs;
+        $base_dirs = (array) $base_dirs;
         foreach ($base_dirs as $key => $base_dir) {
-            $base_dirs[$key] = rtrim($base_dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+            $base_dirs[$key] = rtrim($base_dir, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
         }
 
         // prepend or append?
@@ -85,19 +83,19 @@ class Autoloader
             $this->prefixes[$prefix] = array_merge($this->prefixes[$prefix], $base_dirs);
         }
     }
-    
+
     /**
      * Sets all namespace prefixes and their base directories. This overwrites
      * the existing prefixes.
      *
      * @param array $prefixes An associative array of namespace prefixes and
-     * their base directories.
+     *                        their base directories.
      *
      * @return null
      */
     public function setPrefixes(array $prefixes)
     {
-        $this->prefixes = array();
+        $this->prefixes = [];
         foreach ($prefixes as $key => $val) {
             $this->addPrefix($key, $val);
         }
@@ -112,14 +110,12 @@ class Autoloader
     {
         return $this->prefixes;
     }
-    
-    
+
     /**
      * Sets the explicit file path for an explicit class name.
      *
      * @param string $class The explicit class name.
-     *
-     * @param string $file The file path to that class.
+     * @param string $file  The file path to that class.
      *
      * @return null
      */
@@ -133,7 +129,7 @@ class Autoloader
      * explicit mappings.
      *
      * @param array $class_files An array of class-to-file mappings where the
-     * key is the class name and the value is the file path.
+     *                           key is the class name and the value is the file path.
      *
      * @return null
      */
@@ -146,7 +142,7 @@ class Autoloader
      * Adds file paths for class names to the existing explicit mappings.
      *
      * @param array $class_files An array of class-to-file mappings where the
-     * key is the class name and the value is the file path.
+     *                           key is the class name and the value is the file path.
      *
      * @return null
      */
@@ -154,7 +150,7 @@ class Autoloader
     {
         $this->class_files = array_merge($this->class_files, $class_files);
     }
-    
+
     /**
      * Returns the list of explicit class names and their file paths.
      *
@@ -170,25 +166,25 @@ class Autoloader
      * autoloader.
      *
      * @return array An array of key-value pairs where the key is the class
-     * or interface name and the value is the file name.
+     *               or interface name and the value is the file name.
      */
     public function getLoadedClasses()
     {
         return $this->loaded_classes;
     }
-    
+
     /**
      * Loads the class file for a given class name.
      *
      * @param string $class The fully-qualified class name.
      *
      * @return mixed The mapped file name on success, or boolean false on
-     * failure.
+     *               failure.
      */
     public function loadClass($class)
     {
         // reset debug info
-        $this->debug = array("Loading $class");
+        $this->debug = ["Loading $class"];
 
         // is an explicit class file noted?
         if (isset($this->class_files[$class])) {
@@ -197,12 +193,13 @@ class Autoloader
             if ($found) {
                 $this->debug[] = "Loaded from explicit: $file";
                 $this->loaded_classes[$class] = $file;
+
                 return $file;
             }
         }
 
         // no explicit class file
-        $this->debug[] = "No explicit class file";
+        $this->debug[] = 'No explicit class file';
 
         // the current namespace prefix
         $prefix = $class;
@@ -222,6 +219,7 @@ class Autoloader
             if ($file) {
                 $this->debug[] = "Loaded from $prefix: $file";
                 $this->loaded_classes[$class] = $file;
+
                 return $file;
             }
 
@@ -232,24 +230,25 @@ class Autoloader
 
         // did not find a file for the class
         $this->debug[] = "$class not loaded";
+
         return false;
     }
-    
+
     /**
      * Load the mapped file for a namespace prefix and relative class.
      *
-     * @param string $prefix The namespace prefix.
-     *
+     * @param string $prefix         The namespace prefix.
      * @param string $relative_class The relative class name.
      *
      * @return mixed Boolean false if no mapped file can be loaded, or the
-     * name of the mapped file that was loaded.
+     *               name of the mapped file that was loaded.
      */
     protected function loadFile($prefix, $relative_class)
     {
         // are there any base directories for this namespace prefix?
-        if (! isset($this->prefixes[$prefix])) {
+        if (!isset($this->prefixes[$prefix])) {
             $this->debug[] = "$prefix: no base dirs";
+
             return false;
         }
 
@@ -260,8 +259,8 @@ class Autoloader
             // replace namespace separators with directory separators
             // in the relative class name, append with .php
             $file = $base_dir
-                  . str_replace('\\', DIRECTORY_SEPARATOR, $relative_class)
-                  . '.php';
+                  .str_replace('\\', DIRECTORY_SEPARATOR, $relative_class)
+                  .'.php';
 
             // if the mapped file exists, require it
             if ($this->requireFile($file)) {
@@ -276,7 +275,7 @@ class Autoloader
         // never found it
         return false;
     }
-    
+
     /**
      * If a file exists, require it from the file system.
      *
@@ -288,9 +287,10 @@ class Autoloader
     {
         if (file_exists($file)) {
             require $file;
+
             return true;
         }
+
         return false;
     }
-
 }

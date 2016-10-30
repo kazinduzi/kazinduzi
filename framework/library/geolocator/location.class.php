@@ -1,4 +1,6 @@
-<?php defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
+<?php
+
+defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
 
 class Location
 {
@@ -21,12 +23,14 @@ class Location
     private $gmtoffset;
     private $dstoffset;
 
-    public function __construct($ip, Locator $locator) {
+    public function __construct($ip, Locator $locator)
+    {
         $this->ip = $ip;
         $this->locator = $locator;
     }
 
-    private function initialize() {
+    private function initialize()
+    {
         if ($this->initialized === true) {
             return;
         }
@@ -34,68 +38,93 @@ class Location
         $this->locator->initializeLocation($this);
     }
 
-    public function getIp() {
+    public function getIp()
+    {
         $this->initialize();
+
         return $this->ip;
     }
 
-    public function getCountryCode() {
+    public function getCountryCode()
+    {
         $this->initialize();
+
         return $this->countryCode;
     }
 
-    public function getCountryName() {
+    public function getCountryName()
+    {
         $this->initialize();
+
         return $this->countryName;
     }
 
-    public function getRegionCode() {
+    public function getRegionCode()
+    {
         $this->initialize();
+
         return $this->regionCode;
     }
 
-    public function getRegionName() {
+    public function getRegionName()
+    {
         $this->initialize();
+
         return $this->regionName;
     }
 
-    public function getCity() {
+    public function getCity()
+    {
         $this->initialize();
+
         return $this->city;
     }
 
-    public function getZipPostalCode() {
+    public function getZipPostalCode()
+    {
         $this->initialize();
+
         return $this->zipPostalCode;
     }
 
-    public function getLatitude() {
+    public function getLatitude()
+    {
         $this->initialize();
+
         return $this->latitude;
     }
 
-    public function getLongitude() {
+    public function getLongitude()
+    {
         $this->initialize();
+
         return $this->longitude;
     }
 
-    public function getTimezone() {
+    public function getTimezone()
+    {
         $this->initialize();
+
         return $this->timezone;
     }
 
-    public function getGmtOffset() {
+    public function getGmtOffset()
+    {
         $this->initialize();
+
         return $this->gmtoffset;
     }
 
-    public function getDstOffset() {
+    public function getDstOffset()
+    {
         $this->initialize();
+
         return $this->dstoffset;
     }
 
-    public function toArray() {
-        return array(
+    public function toArray()
+    {
+        return [
             'ip'            => $this->getIp(),
             'countryCode'   => $this->getCountryCode(),
             'countryName'   => $this->getCountryName(),
@@ -107,7 +136,7 @@ class Location
             'longitude'     => $this->getLongitude(),
             'timezone'      => $this->getTimezone(),
             'gmtOffset'     => $this->getGmtOffset(),
-            'dstOffset'     => $this->getDstOffset()
-        );
+            'dstOffset'     => $this->getDstOffset(),
+        ];
     }
 }

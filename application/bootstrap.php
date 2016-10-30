@@ -1,5 +1,7 @@
-<?php defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
-/**
+<?php
+
+defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
+/*
  * Kazinduzi Framework (http://framework.kazinduzi.com/)
  *
  * @author    Emmanuel Ndayiragije <endayiragije@gmail.com>
@@ -11,14 +13,16 @@
 sanitize_input();
 Kazinduzi::init();
 
-$container = new \Pimple\Container();
-$container['db'] = function() {
+use Kazinduzi\IoC\Container;
+
+$container = new Container();
+$container['db'] = function () {
     return Kazinduzi::db();
 };
-$container['session'] = function() {
+$container['session'] = function () {
     return Kazinduzi::session();
 };
-$container['cache'] = function() {
+$container['cache'] = function () {
     return Kazinduzi::cache();
 };
 

@@ -22,7 +22,7 @@ print_r($mainConf);
 	<title>Kazinduzi CMF &rsaquo; Installation</title>
 </head>
     <body>
-        <?php if ($phpCheck==false || !empty($errors)) :?>
+        <?php if ($phpCheck == false || !empty($errors)) :?>
             <h1>Errors</h1>
             <div class="display-errors">
                 <?php
@@ -70,58 +70,60 @@ print_r($mainConf);
                     </ul>
                 </form>
             </div>
-        <?php endif;?>
+        <?php endif; ?>
     </body>
 </body>
 </html>
 
 <?php
 /**
- *
- * @return boolean
+ * @return bool
  */
-function checkPHPVersion(){
+function checkPHPVersion()
+{
     if (version_compare(PHP_VERSION, '5.3.0', '>=')) {
         return true;
     }
+
     return false;
 }
 
 /**
- *
  * @return type
  */
-function checkRequirements(){
-    $errors = array();
+function checkRequirements()
+{
+    $errors = [];
     if (!function_exists('imagecreatetruecolor')) {
         $errors['imageTest'] = '';
     }
-    if (!function_exists('mysql_connect') || !function_exists('mysqli_connect')){
+    if (!function_exists('mysql_connect') || !function_exists('mysqli_connect')) {
         $errors['dbTest'] = true;
     }
-    if (!function_exists('xml_parse') || !function_exists('simplexml_load_file')){
+    if (!function_exists('xml_parse') || !function_exists('simplexml_load_file')) {
         $errors['xmlTest'] = true;
     }
     // Check writtability
-    if (!is_writable(APP_PATH.'/configs')){
+    if (!is_writable(APP_PATH.'/configs')) {
         $errors['config_dir'] = 'Your configuration directory '.APP_PATH.'/configs does not appear to be writable by the web server.';
     }
     //
-    if (!is_writable(__DIR__.'/html')){
+    if (!is_writable(__DIR__.'/html')) {
         $errors['html_dir'] = 'Your public /html directory does not appear to be writtable.';
     }
-    return (array)$errors;
+
+    return (array) $errors;
 }
 
 /**
- *
  * @param type $mainConf
  * @param type $data
  */
-function overwriteMainConfig($mainConf, $data){
-    foreach ($data as $key=>$val){
-        foreach($mainConf as &$line){
-            if (strpos($line, $key) !== false && !empty($val)){
+function overwriteMainConfig($mainConf, $data)
+{
+    foreach ($data as $key => $val) {
+        foreach ($mainConf as &$line) {
+            if (strpos($line, $key) !== false && !empty($val)) {
                 $line = '$config[\''.$key.'\'] = \''.$val.'\';'."\r\n";
             }
         }

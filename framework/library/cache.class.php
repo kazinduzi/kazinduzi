@@ -1,19 +1,18 @@
-<?php defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
+<?php
+
+defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
 /**
- * Kazinduzi Framework (http://framework.kazinduzi.com/)
+ * Kazinduzi Framework (http://framework.kazinduzi.com/).
  *
  * @author    Emmanuel Ndayiragije <endayiragije@gmail.com>
+ *
  * @link      http://kazinduzi.com
+ *
  * @copyright Copyright (c) 2010-2013 Kazinduzi. (http://www.kazinduzi.com)
  * @license   http://kazinduzi.com/page/license MIT License
- * @package   Kazinduzi
  */
-
-abstract class Cache {
-
-    /**
-     *
-     */
+abstract class Cache
+{
     const TTL = 3600;
 
     /**
@@ -23,9 +22,11 @@ abstract class Cache {
 
     /**
      * @param string $group
+     *
      * @return Cache object
      */
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (isset(self::$instance)) {
             return self::$instance;
         }
@@ -38,40 +39,47 @@ abstract class Cache {
     }
 
     /**
-     * Overload the __clone() method to prevent cloning
-     * @return  void
-     * @throws  Cache_Exception
+     * Overload the __clone() method to prevent cloning.
+     *
+     * @throws Cache_Exception
+     *
+     * @return void
      */
-    private function __clone() {
+    private function __clone()
+    {
         throw new Exception('Cloning of this object is forbidden');
     }
 
     /**
-	 * Retrieve a cached value entry by id.
-	 *
-	 * @param   string   id of cache to entry
-	 * @param   string   default value to return if cache miss
-	 * @return  mixed
-	 * @throws  Exception
-	 */
+     * Retrieve a cached value entry by id.
+     *
+     * @param   string   id of cache to entry
+     * @param   string   default value to return if cache miss
+     *
+     * @throws Exception
+     *
+     * @return mixed
+     */
     abstract public function get($id);
 
     /**
-     * Set a value to cache with id and lifetime
+     * Set a value to cache with id and lifetime.
      *
      * @param   string   id of cache entry
      * @param   string   data to set to cache
-     * @param   integer  lifetime in seconds
-     * @return  boolean
+     * @param   int  lifetime in seconds
+     *
+     * @return bool
      */
     abstract public function set($id, $data, $lifetime = 3600, $overwrite = false);
 
     /**
-    * Delete a cache entry based on id
-    *
-    * @param   string   id to remove from cache
-    * @return  boolean
-    */
+     * Delete a cache entry based on id.
+     *
+     * @param   string   id to remove from cache
+     *
+     * @return bool
+     */
     abstract public function delete($id);
 
     /**
@@ -81,7 +89,7 @@ abstract class Cache {
      * using shared memory cache systems, as it will wipe every
      * entry within the system for all clients.
      *
-     * @return  boolean
+     * @return bool
      */
     abstract public function deleteAll();
 
@@ -89,11 +97,12 @@ abstract class Cache {
      * Replaces troublesome characters with underscores.
      *
      * @param   string   id of cache to sanitize
-     * @return  string
+     *
+     * @return string
      */
-    protected function _sanitize_id($id){
+    protected function _sanitize_id($id)
+    {
         // Change slashes and spaces to underscores
-        return str_replace(array('/', '\\', ' '), '_', $id);
+        return str_replace(['/', '\\', ' '], '_', $id);
     }
-
 }
