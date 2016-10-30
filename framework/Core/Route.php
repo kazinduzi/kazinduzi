@@ -1,4 +1,5 @@
 <?php
+
 namespace Kazinduzi\Core;
 
 defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
@@ -31,49 +32,49 @@ defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
  * Routes also provide a way to generate URIs (called "reverse routing"), which
  * makes them an extremely powerful and flexible way to generate internal links.
  *
- * @package    Kohana
  * @category   Base
+ *
  * @author     Kohana Team
  * @copyright  (c) 2008-2011 Kohana Team
  * @license    http://kohanaframework.org/license
  */
-class Route {
-
+class Route
+{
     // Defines the pattern of a <segment>
-    const REGEX_KEY     = '<([a-zA-Z0-9_]++)>';
+    const REGEX_KEY = '<([a-zA-Z0-9_]++)>';
 
     // What can be part of a <segment> value
     const REGEX_SEGMENT = '[^/.,;?\n]++';
 
     // What must be escaped in the route regex
-    const REGEX_ESCAPE  = '[.\\+*?[^\\]${}=!|]';
+    const REGEX_ESCAPE = '[.\\+*?[^\\]${}=!|]';
 
     /**
-     * @var  string  default protocol for all routes
+     * @var string default protocol for all routes
      *
      * @example  'http://'
      */
     public static $default_protocol = 'http://';
 
     /**
-     * @var  array   list of valid localhost entries
+     * @var array list of valid localhost entries
      */
-    public static $localhosts = array(false, '', 'local', 'localhost');
+    public static $localhosts = [false, '', 'local', 'localhost'];
 
     /**
-     * @var  string  default action for all routes
+     * @var string default action for all routes
      */
     public static $default_action = 'index';
 
     /**
-     * @var  bool Indicates whether routes are cached
+     * @var bool Indicates whether routes are cached
      */
     public static $cache = false;
 
     /**
-     * @var  array
+     * @var array
      */
-    protected static $_routes = array();
+    protected static $_routes = [];
 
     /**
      * Stores a named route and returns it. The "action" will always be set to
@@ -87,11 +88,12 @@ class Route {
      * @param   string   route name
      * @param   string   URI pattern
      * @param   array    regex patterns for route keys
-     * @return  Route
+     *
+     * @return Route
      */
     public static function set($name, $uri_callback = null, $regex = null)
     {
-        return Route::$_routes[$name] = new Route($uri_callback, $regex);
+        return self::$_routes[$name] = new self($uri_callback, $regex);
     }
 
     /**
@@ -100,15 +102,18 @@ class Route {
      *     $route = Route::get('default');
      *
      * @param   string  route name
-     * @return  Route
-     * @throws  Kohana_Exception
+     *
+     * @throws Kohana_Exception
+     *
+     * @return Route
      */
     public static function get($name)
     {
-        if (!isset(Route::$_routes[$name])) {
-            throw new \Exception('The requested route does not exist: :route', array(':route' => $name));
+        if (!isset(self::$_routes[$name])) {
+            throw new \Exception('The requested route does not exist: :route', [':route' => $name]);
         }
-        return Route::$_routes[$name];
+
+        return self::$_routes[$name];
     }
 
     /**
@@ -116,11 +121,11 @@ class Route {
      *
      *     $routes = Route::all();
      *
-     * @return  array  routes by name
+     * @return array routes by name
      */
     public static function all()
     {
-        return Route::$_routes;
+        return self::$_routes;
     }
 
     /**
@@ -129,11 +134,12 @@ class Route {
      *     $name = Route::name($route)
      *
      * @param   object  Route instance
-     * @return  string
+     *
+     * @return string
      */
     public static function name(Route $route)
     {
-        return array_search($route, Route::$_routes);
+        return array_search($route, self::$_routes);
     }
 
     /**
@@ -147,41 +153,48 @@ class Route {
      *         Route::cache(true);
      *     }
      *
-     * @param   boolean   cache the current routes
-     * @return  void      when saving routes
-     * @return  boolean   when loading routes
+     * @param   bool   cache the current routes
+     *
+     * @return void when saving routes
+     * @return bool when loading routes
+     *
      * @uses    Kohana::cache
      */
     public static function cache($save = false)
     {
         if ($save === true) {
-            Kohana::cache('Route::cache()', Route::$_routes);
+            Kohana::cache('Route::cache()', self::$_routes);
         } else {
             if ($routes = \Kazinduzi::cache('Route::cache()')) {
-                Route::$_routes = $routes;                    
-                return Route::$cache = true;
-            } else {                    
-                return Route::$cache = false;
+                self::$_routes = $routes;
+
+                return self::$cache = true;
+            } else {
+                return self::$cache = false;
             }
         }
     }
 
     /**
-     * Create a URL from a route name. This is a shortcut for:
+     * Create a URL from a route name. This is a shortcut for:.
      *
      *     echo URL::site(Route::get($name)->uri($params), $protocol);
      *
      * @param   string   route name
      * @param   array    URI parameters
      * @param   mixed   protocol string or boolean, adds protocol and domain
-     * @return  string
+     *
+     * @return string
+     *
      * @since   3.0.7
+     *
      * @uses    URL::site
      */
     public static function url($name, array $params = null, $protocol = null)
     {
-        $route = Route::get($name);
-        return Route::get($name)->uri($params);        
+        $route = self::get($name);
+
+        return self::get($name)->uri($params);
     }
 
     /**
@@ -196,59 +209,61 @@ class Route {
      *         )
      *     );
      *
-     * @return  string
+     * @return string
+     *
      * @uses    Route::REGEX_ESCAPE
      * @uses    Route::REGEX_SEGMENT
      */
     public static function compile($uri, array $regex = null)
     {
-        if ( ! is_string($uri)) { 
+        if (!is_string($uri)) {
             return;
         }
         // The URI should be considered literal except for keys and optional parts
         // Escape everything preg_quote would escape except for : ( ) < >
-        $expression = preg_replace('#'.Route::REGEX_ESCAPE.'#', '\\\\$0', $uri);
+        $expression = preg_replace('#'.self::REGEX_ESCAPE.'#', '\\\\$0', $uri);
 
         if (strpos($expression, '(') !== false) {
             // Make optional parts of the URI non-capturing and optional
-            $expression = str_replace(array('(', ')'), array('(?:', ')?'), $expression);
+            $expression = str_replace(['(', ')'], ['(?:', ')?'], $expression);
         }
         // Insert default regex for keys
-        $expression = str_replace(array('<', '>'), array('(?P<', '>'.Route::REGEX_SEGMENT.')'), $expression);
+        $expression = str_replace(['<', '>'], ['(?P<', '>'.self::REGEX_SEGMENT.')'], $expression);
         if ($regex) {
-            $search = $replace = array();
+            $search = $replace = [];
             foreach ($regex as $key => $value) {
-                $search[]  = "<$key>".Route::REGEX_SEGMENT;
+                $search[] = "<$key>".self::REGEX_SEGMENT;
                 $replace[] = "<$key>$value";
             }
             // Replace the default regex with the user-specified regex
             $expression = str_replace($search, $replace, $expression);
         }
+
         return '#^'.$expression.'$#uD';
     }
 
     /**
-     * @var  callback     The callback method for routes
+     * @var callback The callback method for routes
      */
     protected $_callback;
 
     /**
-     * @var  string  route URI
+     * @var string route URI
      */
     protected $_uri = '';
 
     /**
-     * @var  array
+     * @var array
      */
-    protected $_regex = array();
+    protected $_regex = [];
 
     /**
-     * @var  array
+     * @var array
      */
-    protected $_defaults = array('action' => 'index', 'host' => false);
+    protected $_defaults = ['action' => 'index', 'host' => false];
 
     /**
-     * @var  string
+     * @var string
      */
     protected $_route_regex;
 
@@ -280,26 +295,28 @@ class Route {
      *
      * @param   mixed    route URI pattern or lambda/callback function
      * @param   array    key patterns
-     * @return  void
+     *
+     * @return void
+     *
      * @uses    Route::_compile
      */
     public function __construct($uri = null, $regex = null)
     {
-        if ($uri === null) {                
+        if ($uri === null) {
             return;
         }
-        if (!is_string($uri) AND is_callable($uri)) {
+        if (!is_string($uri) and is_callable($uri)) {
             $this->_callback = $uri;
             $this->_uri = $regex;
             $regex = null;
-        } elseif(!empty($uri)) {
+        } elseif (!empty($uri)) {
             $this->_uri = $uri;
         }
         if (!empty($regex)) {
             $this->_regex = $regex;
         }
         // Store the compiled regex locally
-        $this->_route_regex = Route::compile($uri, $regex);
+        $this->_route_regex = self::compile($uri, $regex);
     }
 
     /**
@@ -312,11 +329,13 @@ class Route {
      *     ));
      *
      * @param   array  key values
-     * @return  $this
+     *
+     * @return $this
      */
     public function defaults(array $defaults = null)
     {
         $this->_defaults = $defaults;
+
         return $this;
     }
 
@@ -336,8 +355,9 @@ class Route {
      *     }
      *
      * @param   string  URI to match
-     * @return  array   on success
-     * @return  false   on failure
+     *
+     * @return array on success
+     * @return false on failure
      */
     public function matches($uri)
     {
@@ -351,7 +371,7 @@ class Route {
             if (!preg_match($this->_route_regex, $uri, $matches)) {
                 return false;
             }
-            $params = array();
+            $params = [];
             foreach ($matches as $key => $value) {
                 if (is_int($key)) {
                     continue;
@@ -360,10 +380,11 @@ class Route {
             }
         }
         foreach ($this->_defaults as $key => $value) {
-            if (!isset($params[$key]) OR $params[$key] === '') {
+            if (!isset($params[$key]) or $params[$key] === '') {
                 $params[$key] = $value;
             }
         }
+
         return $params;
     }
 
@@ -371,11 +392,11 @@ class Route {
      * Returns whether this route is an external route
      * to a remote controller.
      *
-     * @return  boolean
+     * @return bool
      */
     public function is_external()
     {
-        return !in_array($this->_defaults['host'], Route::$localhosts);
+        return !in_array($this->_defaults['host'], self::$localhosts);
     }
 
     /**
@@ -389,30 +410,34 @@ class Route {
      *     ));
      *
      * @param   array   URI parameters
-     * @return  string
-     * @throws  Kohana_Exception
+     *
+     * @throws Kohana_Exception
+     *
+     * @return string
+     *
      * @uses    Route::REGEX_Key
      */
     public function uri(array $params = null)
     {
         // Start with the routed URI
         $uri = $this->_uri;
-        if (strpos($uri, '<') === false AND strpos($uri, '(') === false) {
-            if (!$this->is_external()){
+        if (strpos($uri, '<') === false and strpos($uri, '(') === false) {
+            if (!$this->is_external()) {
                 return $uri;
             }
             if (strpos($this->_defaults['host'], '://') === false) {
-                $params['host'] = Route::$default_protocol.$this->_defaults['host'];
+                $params['host'] = self::$default_protocol.$this->_defaults['host'];
             } else {
                 $params['host'] = $this->_defaults['host'];
             }
-            return rtrim($params['host'], '/') . '/' . $uri;
+
+            return rtrim($params['host'], '/').'/'.$uri;
         }
 
         while (preg_match('#\([^()]++\)#', $uri, $match)) {
             $search = $match[0];
             $replace = substr($match[0], 1, -1);
-            while (preg_match('#'.Route::REGEX_KEY.'#', $replace, $match)) {
+            while (preg_match('#'.self::REGEX_KEY.'#', $replace, $match)) {
                 list($key, $param) = $match;
                 if (isset($params[$param])) {
                     $replace = str_replace($key, $params[$param], $replace);
@@ -424,13 +449,13 @@ class Route {
             $uri = str_replace($search, $replace, $uri);
         }
 
-        while (preg_match('#'.Route::REGEX_KEY.'#', $uri, $match)) {
+        while (preg_match('#'.self::REGEX_KEY.'#', $uri, $match)) {
             list($key, $param) = $match;
-            if ( ! isset($params[$param])) {
+            if (!isset($params[$param])) {
                 if (isset($this->_defaults[$param])) {
                     $params[$param] = $this->_defaults[$param];
                 } else {
-                    throw new Exception('Required route parameter not passed: :param', array(':param' => $param,));
+                    throw new Exception('Required route parameter not passed: :param', [':param' => $param]);
                 }
             }
             $uri = str_replace($key, $params[$param], $uri);
@@ -440,11 +465,11 @@ class Route {
         if ($this->is_external()) {
             $host = $this->_defaults['host'];
             if (strpos($host, '://') === false) {
-                $host = Route::$default_protocol . $host;
+                $host = self::$default_protocol.$host;
             }
             $uri = rtrim($host, '/').'/'.$uri;
         }
+
         return $uri;
     }
-
-} 
+}

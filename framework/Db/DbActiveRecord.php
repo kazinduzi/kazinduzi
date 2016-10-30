@@ -1,8 +1,9 @@
 <?php
+
 namespace Kazinduzi\Db;
 
 defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
-/**
+/*
  * Kazinduzi Framework (http://framework.kazinduzi.com/)
  *
  * @author    Emmanuel Ndayiragije <endayiragije@gmail.com>
@@ -11,17 +12,16 @@ defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
  * @license   http://kazinduzi.com/page/license MIT License
  * @package   Kazinduzi
  */
-use Kazinduzi\Db\DbActiveRecordElement;
 
-class DbActiveRecord 
+class DbActiveRecord
 {
     /**
-     * CONSTANTS
+     * CONSTANTS.
      */
-    const GROUP_CRITERIA  = ' GROUP BY ';
-    const ORDER_CRITERIA  = ' ORDER BY ';
+    const GROUP_CRITERIA = ' GROUP BY ';
+    const ORDER_CRITERIA = ' ORDER BY ';
     const HAVING_CRITERIA = ' HAVING ';
-    const LIMIT_CRITERIA  = ' LIMIT ';
+    const LIMIT_CRITERIA = ' LIMIT ';
     const OFFSET_CRITERIA = ' OFFSET ';
 
     /**
@@ -35,56 +35,58 @@ class DbActiveRecord
     protected static $instance;
 
     /**
-     * Create a singleton object of DbActiveRecord
+     * Create a singleton object of DbActiveRecord.
+     *
      * @return type
      */
-    public static function getSingleton() 
+    public static function getSingleton()
     {
         if (empty(self::$instance)) {
-	    self::$instance = new static;
-	}
+            self::$instance = new static();
+        }
+
         return self::$instance;
     }
 
     /**
-     * @var string  The query type.
+     * @var string The query type.
      */
     protected $type = '';
 
     /**
-     * @var object  The select element.
+     * @var object The select element.
      */
     protected $select = null;
 
     /**
-     * @var     object	The delete element.
+     * @var object The delete element.
      */
     protected $delete = null;
 
     /**
-     * @var	object	The update element.
+     * @var object The update element.
      */
     protected $update = null;
 
     /**
-     * @var	object	The insert element.
+     * @var object The insert element.
      */
     protected $insert = null;
 
     /**
-     * @var	object	The from element.
+     * @var object The from element.
      */
     protected $from = null;
 
     /**
-     * @var	object	The joins elements.
+     * @var object The joins elements.
      */
-    protected $join,
-	$innerjoin,
-	$leftjoin,
-	$rightjoin,
-	$crossjoin,
-	$naturaljoin = null;
+    protected $join;
+    protected $innerjoin;
+    protected $leftjoin;
+    protected $rightjoin;
+    protected $crossjoin;
+    protected $naturaljoin = null;
 
     /**
      * @var object The set element.
@@ -107,18 +109,17 @@ class DbActiveRecord
     protected $having = null;
 
     /**
-     * @var	object	The order element.
+     * @var object The order element.
      */
     protected $order = null;
 
     /**
      * @var type
      */
-    protected $limit, $offset = null;
+    protected $limit;
+    protected $offset = null;
 
-    /**
-     *
-     */
+
     protected $union = null;
 
     /**
@@ -126,105 +127,105 @@ class DbActiveRecord
      * This method is invoked when an AR instance is newly created and has
      * its {@link scenario} set.
      * You may override this method to provide code that is needed to initialize the model (e.g. setting
-     * initial property values.)
+     * initial property values.).
+     *
      * @since 1.0.8
      */
     public function init()
     {
-	
     }
 
     /**
-     *
      * @param type $clause
+     *
      * @return DbActiveRecord
      */
-    public function clear($clause = null) 
+    public function clear($clause = null)
     {
         switch ($clause) {
             case 'select':
-		$this->select = null;
-		$this->type = null;
-		break;
+        $this->select = null;
+        $this->type = null;
+        break;
             case 'delete':
-		$this->delete = null;
-		$this->type = null;
-		break;
+        $this->delete = null;
+        $this->type = null;
+        break;
             case 'update':
-		$this->update = null;
-		$this->type = null;
-		break;
+        $this->update = null;
+        $this->type = null;
+        break;
             case 'insert':
-		$this->insert = null;
-		$this->type = null;
-		break;
+        $this->insert = null;
+        $this->type = null;
+        break;
             case 'from':
-		$this->from = null;
-		break;
+        $this->from = null;
+        break;
             case 'join':
-		$this->join = null;
-		break;
+        $this->join = null;
+        break;
             case 'set':
-		$this->set = null;
-		break;
+        $this->set = null;
+        break;
             case 'where':
-		$this->where = null;
-		break;
+        $this->where = null;
+        break;
             case 'group':
-		$this->group = null;
-		break;
+        $this->group = null;
+        break;
 
             case 'having':
-		$this->having = null;
-		break;
+        $this->having = null;
+        break;
             case 'order':
-		$this->order = null;
-		break;
+        $this->order = null;
+        break;
             default:
-		$this->type = null;
-		$this->select = null;
-		$this->delete = null;
-		$this->update = null;
-		$this->insert = null;
-		$this->from = null;
-		$this->join = null;
-		$this->set = null;
-		$this->where = null;
-		$this->group = null;
-		$this->having = null;
-		$this->order = null;
-		$this->join = null;
-		$this->innerjoin = null;
-		$this->leftjoin = null;
-		$this->rightjoin = null;
-		$this->crossjoin = null;
-		$this->naturaljoin = null;
-		break;
+        $this->type = null;
+        $this->select = null;
+        $this->delete = null;
+        $this->update = null;
+        $this->insert = null;
+        $this->from = null;
+        $this->join = null;
+        $this->set = null;
+        $this->where = null;
+        $this->group = null;
+        $this->having = null;
+        $this->order = null;
+        $this->join = null;
+        $this->innerjoin = null;
+        $this->leftjoin = null;
+        $this->rightjoin = null;
+        $this->crossjoin = null;
+        $this->naturaljoin = null;
+        break;
         }
+
         return $this;
     }
 
-
     /**
-     *
      * @static type $AR object
      */
-    public function reset() 
+    public function reset()
     {
-        $reflect = new ReflectionClass(new self);
+        $reflect = new ReflectionClass(new self());
         $props = $reflect->getProperties(ReflectionProperty::IS_PROTECTED);
-        foreach($props as $prop) {
+        foreach ($props as $prop) {
             if (isset($this->{$prop->getName()})) {
                 $this->{$prop->getName()} = null;
             }
         }
+
         return $this;
     }
 
     /**
      * @return type
      */
-    public function getDbo() 
+    public function getDbo()
     {
         if (self::$db !== null) {
             return self::$db;
@@ -234,7 +235,6 @@ class DbActiveRecord
     }
 
     /**
-     *
      * @return type
      */
     public function getDbox()
@@ -243,11 +243,11 @@ class DbActiveRecord
     }
 
     /**
-     *
      * @param type $columns
+     *
      * @return \DbActiveRecord
      */
-    public function select($columns = '*') 
+    public function select($columns = '*')
     {
         $this->type = 'select';
         if (is_null($this->select)) {
@@ -255,15 +255,16 @@ class DbActiveRecord
         } else {
             $this->select->append($columns);
         }
+
         return $this;
     }
 
     /**
-     *
      * @param type $columns
+     *
      * @return \DbActiveRecord
      */
-    public function select_distinct($columns='*') 
+    public function select_distinct($columns = '*')
     {
         $this->type = 'select';
         if (is_null($this->select)) {
@@ -271,67 +272,75 @@ class DbActiveRecord
         } else {
             $this->select->append($columns);
         }
+
         return $this;
     }
 
     /***
      *
      */
-    public function select_avg($column) 
+    public function select_avg($column)
     {
         $this->type = 'select';
-        $this->select = 'SELECT AVG(' . $column . ') as ' . $column;
+        $this->select = 'SELECT AVG('.$column.') as '.$column;
+
         return $this;
     }
 
     /**
      * @param type $column
+     *
      * @return DbActiveRecord
      */
-    public function select_min($column) 
+    public function select_min($column)
     {
         $this->type = 'select';
-        $this->select = 'SELECT MIN(' . $column . ') as ' . $column;
+        $this->select = 'SELECT MIN('.$column.') as '.$column;
+
         return $this;
     }
 
     /**
      * @param type $column
+     *
      * @return DbActiveRecord
      */
-    public function select_max($column) 
+    public function select_max($column)
     {
         $this->type = 'select';
-        $this->select = 'SELECT MAX(' . $column . ') as ' . $column;
+        $this->select = 'SELECT MAX('.$column.') as '.$column;
+
         return $this;
     }
 
     /**
      * @param type $column
+     *
      * @return DbActiveRecord
      */
-    public function select_sum($column) 
+    public function select_sum($column)
     {
         $this->type = 'select';
-        $this->select = 'SELECT SUM(' . $column . ') as ' . $column;
+        $this->select = 'SELECT SUM('.$column.') as '.$column;
+
         return $this;
     }
 
     /**
      * @param	mixed	A string or array of table names.
      *
-     * @return	DbActiveRecord	Returns this object to allow chaining.
+     * @return DbActiveRecord Returns this object to allow chaining.
      */
-    public function from($tables) 
+    public function from($tables)
     {
         if (is_null($this->from)) {
             $this->from = new DbActiveRecordElement('FROM', $tables);
         } else {
             $this->from->append($tables);
         }
+
         return $this;
     }
-
 
     /**
      * Sets the WHERE part of the query.
@@ -375,11 +384,12 @@ class DbActiveRecord
      * </ul>
      *
      * @param mixed $conditions the conditions that should be put in the WHERE part.
-     * @param array $params the parameters (name=>value) to be bound to the query
+     * @param array $params     the parameters (name=>value) to be bound to the query
+     *
      * @return DbActiveRecord object
 
      */
-    public function where($conditions) 
+    public function where($conditions)
     {
         /*
         echo $this->processConditions(array('and', 'id=1', 'id=2'));
@@ -393,148 +403,154 @@ class DbActiveRecord
         } else {
             $this->where->append($conditions);
         }
+
         return $this;
     }
 
     /**
-     * 
      * @param string $table
      * @param string $conditions
+     *
      * @return $this
      */
-    public function join($table, $conditions) 
+    public function join($table, $conditions)
     {
         return $this->joinInternal('join', $table, $conditions);
     }
 
     /**
-     * LEFT-JOIN
-     * 
+     * LEFT-JOIN.
+     *
      * @param string $table
      * @param string $conditions
+     *
      * @return $this
      */
-    public function leftJoin($table, $conditions) 
+    public function leftJoin($table, $conditions)
     {
         return $this->joinInternal('left join', $table, $conditions);
     }
 
     /**
      * Appends a RIGHT OUTER JOIN part to the query.
-     * @param string $table the table to be joined.
-     * Table name can contain schema prefix (e.g. 'public.tbl_user') and/or table alias (e.g. 'tbl_user u').
-     * The method will automatically quote the table name unless it contains some parenthesis
-     * (which means the table is given as a sub-query or DB expression).
-     * @param mixed $conditions the join condition that should appear in the ON part.
-     * Please refer to {@link where} on how to specify conditions.
-     * @param array $params the parameters (name=>value) to be bound to the query
+     *
+     * @param string $table      the table to be joined.
+     *                           Table name can contain schema prefix (e.g. 'public.tbl_user') and/or table alias (e.g. 'tbl_user u').
+     *                           The method will automatically quote the table name unless it contains some parenthesis
+     *                           (which means the table is given as a sub-query or DB expression).
+     * @param mixed  $conditions the join condition that should appear in the ON part.
+     *                           Please refer to {@link where} on how to specify conditions.
+     * @param array  $params     the parameters (name=>value) to be bound to the query
      */
-    public function rightJoin($table, $conditions) 
+    public function rightJoin($table, $conditions)
     {
         return $this->joinInternal('right join', $table, $conditions);
     }
 
     /**
-     * CROSS-JOIN
-     * 
+     * CROSS-JOIN.
+     *
      * @param string $table
      * @param string $conditions
+     *
      * @return $this
      */
-    public function crossjoin($table, $conditions) 
+    public function crossjoin($table, $conditions)
     {
         return $this->joinInternal('cross join', $table, $conditions);
     }
 
     /**
-     * NATURAL-JOIN
-     * 
+     * NATURAL-JOIN.
+     *
      * @param string $table
      * @param string $conditions
+     *
      * @return $this
      */
-    public function naturaljoin($table, $conditions) 
+    public function naturaljoin($table, $conditions)
     {
         return $this->joinInternal('natural join', $table, $conditions);
     }
 
     /**
-     * INNER-JOIN
-     * 
+     * INNER-JOIN.
+     *
      * @param string $table
      * @param string $conditions
+     *
      * @return $this
      */
-    public function innerjoin($table, $conditions) 
+    public function innerjoin($table, $conditions)
     {
         return $this->joinInternal('inner join', $table, $conditions);
     }
 
-    /**
-     *
-     *
-     */
+
     public function group($columns)
     {
         if (!is_array($columns)) {
-            $columns = preg_split('/\s*,\s*/',trim($columns), -1, PREG_SPLIT_NO_EMPTY);
+            $columns = preg_split('/\s*,\s*/', trim($columns), -1, PREG_SPLIT_NO_EMPTY);
         }
-        foreach ($columns as $i => $column)
-        {
+        foreach ($columns as $i => $column) {
             if (is_object($column)) {
-                $columns[$i] = (string)$column;
-            }
-            else if (strpos($column,'(') === false) {
+                $columns[$i] = (string) $column;
+            } elseif (strpos($column, '(') === false) {
                 $columns[$i] = $this->getDbo()->quoteColumn($column);
             }
         }
         if (is_null($this->group)) {
             $this->group = new DbActiveRecordElement(self::GROUP_CRITERIA, $columns);
-        }
-        else {
+        } else {
             $this->group->append($conditions);
         }
+
         return $this;
     }
 
     /**
      * Sets the HAVING part of the query.
+     *
      * @param mixed $conditions the conditions to be put after HAVING.
-     * Please refer to {@link where} on how to specify conditions.
-     * @param array $params the parameters (name=>value) to be bound to the query
+     *                          Please refer to {@link where} on how to specify conditions.
+     * @param array $params     the parameters (name=>value) to be bound to the query
+     *
      * @return DbActiveRecord object
      */
-    public function having($conditions) {
+    public function having($conditions)
+    {
         if (is_null($this->having)) {
             $this->having = new DbActiveRecordElement(self::HAVING_CRITERIA, $this->proceedConditions($conditions));
         } else {
             $this->having->append($conditions);
         }
+
         return $this;
     }
 
-
     /**
      * Sets the ORDER BY part of the query.
+     *
      * @param mixed $columns the columns (and the directions) to be ordered by.
-     * Columns can be specified in either a string (e.g. "id ASC, name DESC") or an array (e.g. array('id ASC', 'name DESC')).
-     * The method will automatically quote the column names unless a column contains some parenthesis
-     * (which means the column contains a DB expression).
+     *                       Columns can be specified in either a string (e.g. "id ASC, name DESC") or an array (e.g. array('id ASC', 'name DESC')).
+     *                       The method will automatically quote the column names unless a column contains some parenthesis
+     *                       (which means the column contains a DB expression).
+     *
      * @return DbActiveRecord object
      */
-    public function order($columns, $direction = 'DESC') {
-        $direction = ' ' . strtoupper($direction);
-        if (is_string($columns) && strpos($columns,'(') !== false) {
-            $this->order = self::ORDER_CRITERIA . $columns.$direction;
+    public function order($columns, $direction = 'DESC')
+    {
+        $direction = ' '.strtoupper($direction);
+        if (is_string($columns) && strpos($columns, '(') !== false) {
+            $this->order = self::ORDER_CRITERIA.$columns.$direction;
         } else {
-            if(!is_array($columns)) {
-                $columns = preg_split('/\s*,\s*/',trim($columns), -1, PREG_SPLIT_NO_EMPTY);
+            if (!is_array($columns)) {
+                $columns = preg_split('/\s*,\s*/', trim($columns), -1, PREG_SPLIT_NO_EMPTY);
             }
-            foreach($columns as $i => $column) {
+            foreach ($columns as $i => $column) {
                 if (is_object($column)) {
-                    $columns[$i] = (string)$column;
-                }
-                else if(strpos($column,'(') === false) {
+                    $columns[$i] = (string) $column;
+                } elseif (strpos($column, '(') === false) {
                     if (preg_match('/^(.*?)\s+(asc|desc)$/i', $column, $matches)) {
                         $columns[$i] = $this->getDbo()->quoteColumn($matches[1]).' '.strtoupper($matches[2]);
                     } else {
@@ -542,147 +558,164 @@ class DbActiveRecord
                     }
                 }
             }
-            $this->order = self::ORDER_CRITERIA . implode(', ',$columns) . $direction;;
+            $this->order = self::ORDER_CRITERIA.implode(', ', $columns).$direction;
         }
+
         return $this;
     }
 
     /**
      * Sets the LIMIT part of the query.
-     * @param integer $limit the limit
-     * @param integer $offset the offset
+     *
+     * @param int $limit  the limit
+     * @param int $offset the offset
+     *
      * @return DbActiveRecord object
      */
-    public function limit($limit, $offset = null) {
+    public function limit($limit, $offset = null)
+    {
         if ($offset !== null) {
-            $this->offset = (int)$offset;
-            $this->limit = $this->_limit((int)$limit, $this->offset);
+            $this->offset = (int) $offset;
+            $this->limit = $this->_limit((int) $limit, $this->offset);
         } else {
-            $this->limit = $this->_limit((int)$limit);
+            $this->limit = $this->_limit((int) $limit);
         }
+
         return $this;
     }
 
     /**
      * Appends a SQL statement using UNION operator.
+     *
      * @param string $sql the SQL statement to be appended using UNION
+     *
      * @return DbActiveRecord object
      */
-    public function union($sql) {
+    public function union($sql)
+    {
         if (is_string($sql)) {
             $this->union = ' UNION (\n'.trim($sql).')';
         }
         if (is_array($sql)) {
             $sql = array_map('trim', $sql);
-            $this->union = ' UNION (\n'. implode('\n) UNION (\n', $sql) . '\n)';
+            $this->union = ' UNION (\n'.implode('\n) UNION (\n', $sql).'\n)';
         }
+
         return $this;
     }
-
 
     /**
      * Creates and executes an UPDATE SQL statement.
      * The method will properly escape the column names and bind the values to be updated.
-     * @param string $table the table to be updated.
-     * @param array $columns the column data (name=>value) to be updated.
-     * @param mixed $conditions the conditions that will be put in the WHERE part. Please
-     * refer to {@link where} on how to specify conditions.
-     * @param array $params the parameters to be bound to the query.
-     * @return integer number of rows affected by the execution.
+     *
+     * @param string $table      the table to be updated.
+     * @param array  $columns    the column data (name=>value) to be updated.
+     * @param mixed  $conditions the conditions that will be put in the WHERE part. Please
+     *                           refer to {@link where} on how to specify conditions.
+     * @param array  $params     the parameters to be bound to the query.
+     *
+     * @return int number of rows affected by the execution.
      */
-    public function update($table, $columns, $conditions='', $params=array()) {
-        $lines = array();
-        foreach($columns as $name => $value) {
-            $lines[] = $this->getDbo()->quoteColumn($name) . '=' . $this->getDbo()->quote($value);
+    public function update($table, $columns, $conditions = '', $params = [])
+    {
+        $lines = [];
+        foreach ($columns as $name => $value) {
+            $lines[] = $this->getDbo()->quoteColumn($name).'='.$this->getDbo()->quote($value);
         }
-        $sql = 'UPDATE ' . $this->getDbo()->quoteTable($table).' SET ' . implode(', ', $lines);
+        $sql = 'UPDATE '.$this->getDbo()->quoteTable($table).' SET '.implode(', ', $lines);
         if ('' != ($where = $this->proceedConditions($conditions))) {
             $sql .= ' WHERE '.$where;
         }
         $this->autocommit(false);
         try {
-            $this->getDbo()->setQuery($sql)->execute($params);	    
+            $this->getDbo()->setQuery($sql)->execute($params);
             $this->commit();
-        } catch(Exception $e) {
-            $this->rollback();
-            print_r($e);
-        }
-
-    }
-
-    /**
-     * @param type $table
-     * @param array $data
-     * @return int inserted_id
-     */
-    public function insert($table, $data) {
-        $params = array();
-        $names = array();
-        foreach ($data as $name => $value) {
-            $names[] = $this->quoteColumn($name);
-            $params[] = $value;
-        }
-        $params = array_map(array($this->getDbo(), 'quote'), $params);
-        $sql = 'INSERT INTO ' . $this->quoteTable($table) . '(' . implode(', ', $names) . ') VALUES (' . implode(', ', array_values($params)) . ')';
-        $this->autocommit(false);
-        try {
-            $this->setQuery($sql)->execute();
-            $inserted_id = $this->insert_id();
-            $this->commit();
-            return $inserted_id;
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $this->rollback();
             print_r($e);
         }
     }
 
     /**
-     * @param type $table
+     * @param type  $table
      * @param array $data
+     *
      * @return int inserted_id
      */
-    public function replace($table, $data) {
-        $params = array();
-        $names = array();
+    public function insert($table, $data)
+    {
+        $params = [];
+        $names = [];
         foreach ($data as $name => $value) {
             $names[] = $this->quoteColumn($name);
             $params[] = $value;
         }
-        $params = array_map(array($this->getDbo(), 'quote'), $params);
-        $sql = 'REPLACE INTO ' . $this->quoteTable($table) . '(' . implode(', ', $names) . ') VALUES (' . implode(', ', array_values($params)) . ')';
+        $params = array_map([$this->getDbo(), 'quote'], $params);
+        $sql = 'INSERT INTO '.$this->quoteTable($table).'('.implode(', ', $names).') VALUES ('.implode(', ', array_values($params)).')';
         $this->autocommit(false);
         try {
             $this->setQuery($sql)->execute();
             $inserted_id = $this->insert_id();
             $this->commit();
+
             return $inserted_id;
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $this->rollback();
             print_r($e);
         }
     }
 
+    /**
+     * @param type  $table
+     * @param array $data
+     *
+     * @return int inserted_id
+     */
+    public function replace($table, $data)
+    {
+        $params = [];
+        $names = [];
+        foreach ($data as $name => $value) {
+            $names[] = $this->quoteColumn($name);
+            $params[] = $value;
+        }
+        $params = array_map([$this->getDbo(), 'quote'], $params);
+        $sql = 'REPLACE INTO '.$this->quoteTable($table).'('.implode(', ', $names).') VALUES ('.implode(', ', array_values($params)).')';
+        $this->autocommit(false);
+        try {
+            $this->setQuery($sql)->execute();
+            $inserted_id = $this->insert_id();
+            $this->commit();
+
+            return $inserted_id;
+        } catch (Exception $e) {
+            $this->rollback();
+            print_r($e);
+        }
+    }
 
     /**
      * Creates and executes a DELETE SQL statement.
-     * @param string $table the table where the data will be deleted from.
-     * @param mixed $conditions the conditions that will be put in the WHERE part. Please
-     * refer to {@link where} on how to specify conditions.
-     * @param array $params the parameters to be bound to the query.
-     * @return integer number of rows affected by the execution.
+     *
+     * @param string $table      the table where the data will be deleted from.
+     * @param mixed  $conditions the conditions that will be put in the WHERE part. Please
+     *                           refer to {@link where} on how to specify conditions.
+     * @param array  $params     the parameters to be bound to the query.
+     *
+     * @return int number of rows affected by the execution.
      */
-    public function delete($table, $conditions = '', $params=array()) {
-        $sql = 'DELETE FROM ' . $this->getDbo()->quoteTable($table);
+    public function delete($table, $conditions = '', $params = [])
+    {
+        $sql = 'DELETE FROM '.$this->getDbo()->quoteTable($table);
         if (($where = $this->proceedConditions($conditions)) != '') {
-            $sql .= ' WHERE ' . $where;
+            $sql .= ' WHERE '.$where;
         }
         $this->autocommit(false);
-        try{
+        try {
             $this->getDbo()->setQuery($sql)->execute($params);
             $affected = $this->getDbo()->affected_rows();
             $this->commit();
+
             return $affected;
         } catch (Exception $e) {
             $this->rollback();
@@ -701,206 +734,247 @@ class DbActiveRecord
      * If a column is specified with definition only (e.g. 'PRIMARY KEY (name, type)'), it will be directly
      * inserted into the generated SQL.
      *
-     * @param string $table the name of the table to be created. The name will be properly quoted by the method.
-     * @param array $columns the columns (name=>definition) in the new table.
+     * @param string $table   the name of the table to be created. The name will be properly quoted by the method.
+     * @param array  $columns the columns (name=>definition) in the new table.
      * @param string $options additional SQL fragment that will be appended to the generated SQL.
-     * @return integer number of rows affected by the execution.
+     *
+     * @return int number of rows affected by the execution.
      */
-    public function createTable($table, $columns, $options = null) {
+    public function createTable($table, $columns, $options = null)
+    {
         static $dbo;
         $dbo = $this->getDbo();
         $qry = $dbo->createTableQuery($table, $columns, $options = null);
+
         return $this->getDbo()->setQuery($qry)->execute();
     }
 
     /**
-     *
      * @staticvar type $dbo
+     *
      * @param type $table
      * @param type $columns
      * @param null $options
+     *
      * @return type
      */
-    public function createTemporaryTable($table, $columns, $options = null) {
+    public function createTemporaryTable($table, $columns, $options = null)
+    {
         static $dbo;
         $dbo = $this->getDbo();
-        $qry = $dbo->createTableQuery($table, $columns, $options = null, $temp=true);
+        $qry = $dbo->createTableQuery($table, $columns, $options = null, $temp = true);
+
         return $this->getDbo()->setQuery($qry)->execute();
     }
 
     /**
      * Builds and executes a SQL statement for renaming a DB table.
-     * @param string $table the table to be renamed. The name will be properly quoted by the method.
+     *
+     * @param string $table   the table to be renamed. The name will be properly quoted by the method.
      * @param string $newName the new table name. The name will be properly quoted by the method.
-     * @return integer number of rows affected by the execution.
+     *
+     * @return int number of rows affected by the execution.
      */
-    public function renameTable($table, $newName) {
+    public function renameTable($table, $newName)
+    {
         static $dbo;
         $dbo = $this->getDbo();
         $dbo->setQuery($dbo->renameTableQuery($table, $newName))->execute();
+
         return $dbo->clear();
     }
 
     /**
      * Builds and executes a SQL statement for dropping a DB table.
+     *
      * @param string $table the table to be dropped. The name will be properly quoted by the method.
-     * @return integer number of rows affected by the execution.
+     *
+     * @return int number of rows affected by the execution.
      */
-    public function dropTable($table) {
+    public function dropTable($table)
+    {
         static $dbo;
         $dbo = $this->getDbo();
         $dbo->setQuery($dbo->dropTableQuery($table))->execute();
+
         return $dbo->clear();
     }
 
     /**
      * Builds and executes a SQL statement for truncating a DB table.
+     *
      * @param string $table the table to be truncated. The name will be properly quoted by the method.
-     * @return integer number of rows affected by the execution.
+     *
+     * @return int number of rows affected by the execution.
      */
-    public function truncateTable($table) {
+    public function truncateTable($table)
+    {
         static $dbo;
         $dbo = $this->getDbo();
         $nr = $dbo->setQuery($dbo->truncateTableQuery($table))->execute();
-        if(strncasecmp($this->getDbo()->name, 'sqlite', 6) === 0) {
+        if (strncasecmp($this->getDbo()->name, 'sqlite', 6) === 0) {
             $qry = "UPDATE sqlite_sequence SET seq='$value' WHERE name='{$table->name}'";
             $dbo->setQuery($qry)->execute();
         }
         // Clear query
         $dbo->clear();
+
         return $nr;
     }
 
     /**
      * Builds and executes a SQL statement for adding a new DB column.
-     * @param string $table the table that the new column will be added to. The table name will be properly quoted by the method.
+     *
+     * @param string $table  the table that the new column will be added to. The table name will be properly quoted by the method.
      * @param string $column the name of the new column. The name will be properly quoted by the method.
-     * @param string $type the column type. The {@link getColumnType} method will be invoked to convert abstract column type (if any)
-     * into the physical one. Anything that is not recognized as abstract type will be kept in the generated SQL.
-     * For example, 'string' will be turned into 'varchar(255)', while 'string not null' will become 'varchar(255) not null'.
-     * @return integer number of rows affected by the execution.
+     * @param string $type   the column type. The {@link getColumnType} method will be invoked to convert abstract column type (if any)
+     *                       into the physical one. Anything that is not recognized as abstract type will be kept in the generated SQL.
+     *                       For example, 'string' will be turned into 'varchar(255)', while 'string not null' will become 'varchar(255) not null'.
+     *
+     * @return int number of rows affected by the execution.
      */
-    public function addColumn($table, $column, $type) {
+    public function addColumn($table, $column, $type)
+    {
         $dbo = $this->getDbo();
         $dbo->setQuery($dbo->getSchema()->addColumn($table, $column, $type))->execute();
+
         return $dbo->clear();
     }
 
     /**
      * Builds and executes a SQL statement for dropping a DB column.
-     * @param string $table the table whose column is to be dropped. The name will be properly quoted by the method.
+     *
+     * @param string $table  the table whose column is to be dropped. The name will be properly quoted by the method.
      * @param string $column the name of the column to be dropped. The name will be properly quoted by the method.
-     * @return integer number of rows affected by the execution.
+     *
+     * @return int number of rows affected by the execution.
      */
-    public function dropColumn($table, $column) {
+    public function dropColumn($table, $column)
+    {
         $dbo = $this->getDbo();
+
         return $dbo->setText($dbo->getSchema()->dropColumn($table, $column))->execute();
     }
 
     /**
      * Builds and executes a SQL statement for renaming a column.
-     * @param string $table the table whose column is to be renamed. The name will be properly quoted by the method.
-     * @param string $name the old name of the column. The name will be properly quoted by the method.
+     *
+     * @param string $table   the table whose column is to be renamed. The name will be properly quoted by the method.
+     * @param string $name    the old name of the column. The name will be properly quoted by the method.
      * @param string $newName the new name of the column. The name will be properly quoted by the method.
-     * @return integer number of rows affected by the execution.
+     *
+     * @return int number of rows affected by the execution.
      */
-    public function renameColumn($table, $name, $newName) {
+    public function renameColumn($table, $name, $newName)
+    {
         $dbo = $this->getDbo();
         $this->setQuery($dbo->renameColumn($table, $name, $newName))->execute();
+
         return $this->clear();
     }
 
     /**
      * Builds and executes a SQL statement for changing the definition of a column.
-     * @param string $table the table whose column is to be changed. The table name will be properly quoted by the method.
+     *
+     * @param string $table  the table whose column is to be changed. The table name will be properly quoted by the method.
      * @param string $column the name of the column to be changed. The name will be properly quoted by the method.
-     * @param string $type the new column type. The {@link getColumnType} method will be invoked to convert abstract column type (if any)
-     * into the physical one. Anything that is not recognized as abstract type will be kept in the generated SQL.
-     * For example, 'string' will be turned into 'varchar(255)', while 'string not null' will become 'varchar(255) not null'.
-     * @return integer number of rows affected by the execution.
+     * @param string $type   the new column type. The {@link getColumnType} method will be invoked to convert abstract column type (if any)
+     *                       into the physical one. Anything that is not recognized as abstract type will be kept in the generated SQL.
+     *                       For example, 'string' will be turned into 'varchar(255)', while 'string not null' will become 'varchar(255) not null'.
+     *
+     * @return int number of rows affected by the execution.
      */
-    public function alterColumn($table, $column, $type) {
+    public function alterColumn($table, $column, $type)
+    {
         $dbo = $this->getDbo();
         $dbo->setQuery($dbo->getSchema()->alterColumn($table, $name, $newName))->execute();
+
         return $this->clear();
     }
 
     /**
-     *
      * @param type $limit
      * @param type $offset
      */
-    private function _limit($limit, $offset=null) {
-        if(in_array(strtolower($this->getDbo()->name), array('mysql','sqlite')))
-        {
-            if ($offset == null) $offset = '';
-            else $offset .= ', ';
+    private function _limit($limit, $offset = null)
+    {
+        if (in_array(strtolower($this->getDbo()->name), ['mysql', 'sqlite'])) {
+            if ($offset == null) {
+                $offset = '';
+            } else {
+                $offset .= ', ';
+            }
+
             return self::LIMIT_CRITERIA.$offset.$limit;
         }
         //
-        if(in_array(strtolower($this->getDbo()->name), array('mysqli','pg','postgre')))
-        {
+        if (in_array(strtolower($this->getDbo()->name), ['mysqli', 'pg', 'postgre'])) {
             $criteria = self::LIMIT_CRITERIA.$limit;
-            if((int)$offset > 0) {
+            if ((int) $offset > 0) {
                 $criteria .= self::OFFSET_CRITERIA.$offset;
             }
+
             return $criteria;
         }
     }
 
     /**
-     * Generates the condition string that will be put in the WHERE part
+     * Generates the condition string that will be put in the WHERE part.
+     *
      * @param mixed $conditions the conditions that will be put in the WHERE part.
+     *
      * @return string the condition string to put in the WHERE part
      */
-    private function proceedConditions($conditions) 
+    private function proceedConditions($conditions)
     {
         if (!is_array($conditions)) {
-	    return $conditions;
-	} elseif ($conditions === array()) {
-	    return '';
-	}
+            return $conditions;
+        } elseif ($conditions === []) {
+            return '';
+        }
         $n = count($conditions);
         $operator = strtoupper($conditions[0]);
         if ($operator === 'OR' || $operator === 'AND') {
-            $parts = array();
+            $parts = [];
             for ($i = 1; $i < $n; ++$i) {
                 $condition = $this->proceedConditions($conditions[$i]);
                 if ($condition !== '') {
-                    $parts[] = '(' . $condition . ')';
+                    $parts[] = '('.$condition.')';
                 }
             }
-            return $parts === array() ? '' : implode(' ' . $operator . ' ', $parts);
+
+            return $parts === [] ? '' : implode(' '.$operator.' ', $parts);
         }
 
-        if (!isset($conditions[1],$conditions[2])) {
-	    return '';
-	}
+        if (!isset($conditions[1], $conditions[2])) {
+            return '';
+        }
         $column = $conditions[1];
-        if (strpos($column,'(') === false) {
-            $column = '`' . $column . '`';
+        if (strpos($column, '(') === false) {
+            $column = '`'.$column.'`';
         }
         $values = $conditions[2];
         if (!is_array($values)) {
-            $values = array($values);
+            $values = [$values];
         }
 
         if ($operator === 'IN' || $operator === 'NOT IN') {
-            if ($values === array()) {
-		return $operator === 'IN' ? '0=1' : '';
-	    }
-            foreach($values as $i=>$value) {
+            if ($values === []) {
+                return $operator === 'IN' ? '0=1' : '';
+            }
+            foreach ($values as $i => $value) {
                 if (is_string($value)) {
                     $values[$i] = $this->getDbo()->quote($value);
                 } else {
-                    $values[$i] = (string)$value;
+                    $values[$i] = (string) $value;
                 }
             }
-            return $column.' '.$operator.' ('.implode(', ',$values).')';
+
+            return $column.' '.$operator.' ('.implode(', ', $values).')';
         }
 
         if ($operator === 'LIKE' || $operator === 'NOT LIKE' || $operator === 'OR LIKE' || $operator === 'OR NOT LIKE') {
-            if ($values === array()) {
+            if ($values === []) {
                 return $operator === 'LIKE' || $operator === 'OR LIKE' ? '0=1' : '';
             }
             if ($operator === 'LIKE' || $operator === 'NOT LIKE') {
@@ -909,31 +983,34 @@ class DbActiveRecord
                 $andor = ' OR ';
                 $operator = $operator === 'OR LIKE' ? 'LIKE' : 'NOT LIKE';
             }
-            $expressions = array();
+            $expressions = [];
             foreach ($values as $value) {
-                $expressions[] = $column . ' ' . $operator . ' ' . $this->getDbo()->quote('%' . $value . '%');
+                $expressions[] = $column.' '.$operator.' '.$this->getDbo()->quote('%'.$value.'%');
             }
-            return implode($andor,$expressions);
+
+            return implode($andor, $expressions);
         }
-        throw new \Exception('Unknown operator ' . $operator . '.');
+        throw new \Exception('Unknown operator '.$operator.'.');
     }
 
     /**
      * Appends an JOIN part to the query.
-     * @param string $type the join type ('join', 'left join', 'right join', 'cross join', 'natural join')
-     * @param string $table the table to be joined.
-     * Table name can contain schema prefix (e.g. 'public.tbl_user') and/or table alias (e.g. 'tbl_user u').
-     * The method will automatically quote the table name unless it contains some parenthesis
-     * (which means the table is given as a sub-query or DB expression).
-     * @param mixed $conditions the join condition that should appear in the ON part.
-     * Please refer to {@link where} on how to specify conditions.
-     * @param array $params the parameters (name=>value) to be bound to the query
+     *
+     * @param string $type       the join type ('join', 'left join', 'right join', 'cross join', 'natural join')
+     * @param string $table      the table to be joined.
+     *                           Table name can contain schema prefix (e.g. 'public.tbl_user') and/or table alias (e.g. 'tbl_user u').
+     *                           The method will automatically quote the table name unless it contains some parenthesis
+     *                           (which means the table is given as a sub-query or DB expression).
+     * @param mixed  $conditions the join condition that should appear in the ON part.
+     *                           Please refer to {@link where} on how to specify conditions.
+     * @param array  $params     the parameters (name=>value) to be bound to the query
+     *
      * @return DbActiveRecord object itself
      */
-    private function joinInternal($type, $table, $conditions = '') 
+    private function joinInternal($type, $table, $conditions = '')
     {
-        if (strpos($table,'(') === false) {
-            if (preg_match('/^(.*?)\s+(.*)$/', $table, $matches))  {
+        if (strpos($table, '(') === false) {
+            if (preg_match('/^(.*?)\s+(.*)$/', $table, $matches)) {
                 $table = $matches[1].' '.$matches[2];
             }
         }
@@ -942,83 +1019,85 @@ class DbActiveRecord
             $conditions = ' ON '.$conditions;
         }
         if (isset($this->join) && is_string($this->join)) {
-            $this->join = array($this->join);
+            $this->join = [$this->join];
         }
-        $this->join[] = ' ' . strtoupper($type) . ' ' . $table . $conditions;
+        $this->join[] = ' '.strtoupper($type).' '.$table.$conditions;
+
         return $this;
     }
 
     /**
      * Magic function to convert the query object to a string.
-     * @return	string	The completed query.
+     *
+     * @return string The completed query.
      */
-    public function __toString() 
+    public function __toString()
     {
         $query = '';
         switch ($this->type) {
             case 'select':
-                    $query .= (string)$this->select;
-                    $query .= (string)$this->from;
+                    $query .= (string) $this->select;
+                    $query .= (string) $this->from;
                     if ($this->join) {
                         // special case for joins
                         foreach ($this->join as $join) {
-                            $query .= (string)$join;
+                            $query .= (string) $join;
                         }
                     }
                     if ($this->where) {
-                         $query .= (string)$this->where;
+                        $query .= (string) $this->where;
                     }
                     if ($this->group) {
-                         $query .= (string)$this->group;
+                        $query .= (string) $this->group;
                     }
                     if ($this->having) {
-                         $query .= (string)$this->having;
+                        $query .= (string) $this->having;
                     }
                     if ($this->order) {
-                         $query .= (string)$this->order;
+                        $query .= (string) $this->order;
                     }
                     if ($this->limit) {
-                         $query .= (string)$this->limit;
+                        $query .= (string) $this->limit;
                     }
                     if ($this->union) {
-                         $query .= (string)$this->union;
+                        $query .= (string) $this->union;
                     }
                     break;
 
             case 'delete':
-                    $query .= (string)$this->delete;
-                    $query .= (string)$this->from;
+                    $query .= (string) $this->delete;
+                    $query .= (string) $this->from;
                     if ($this->join) {
                         // special case for joins
                         foreach ($this->join as $join) {
-                            $query .= (string)$join;
+                            $query .= (string) $join;
                         }
                     }
-                    if($this->where) {
-                        $query .= (string)$this->where;
+                    if ($this->where) {
+                        $query .= (string) $this->where;
                     }
                     break;
             case 'update':
-                    $query .= (string)$this->update;
-                    $query .= (string)$this->set;
-                    if($this->where) {
-                        $query .= (string)$this->where;
+                    $query .= (string) $this->update;
+                    $query .= (string) $this->set;
+                    if ($this->where) {
+                        $query .= (string) $this->where;
                     }
                     break;
             case 'insert':
-                    $query .= (string)$this->insert;
-                    $query .= (string)$this->set;
-                    if($this->where) {
-                        $query .= (string)$this->where;
+                    $query .= (string) $this->insert;
+                    $query .= (string) $this->set;
+                    if ($this->where) {
+                        $query .= (string) $this->where;
                     }
                     break;
         }
         //
         return $this->sql = $query;
-     }
+    }
 
-     function test() {
-         echo get_class($this);
-     }
-
+    public function test()
+    {
+        echo get_class($this);
+    }
 }

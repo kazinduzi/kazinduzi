@@ -16,10 +16,10 @@ $captcha->blur = true;
 // OPTIONAL Simple autodetect language example
 
 if (!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-    $langs = array('en', 'es');
+    $langs = ['en', 'es'];
     $lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
     if (in_array($lang, $langs)) {
-	$captcha->wordsFile = "Words/$lang.php";
+        $captcha->wordsFile = "Words/$lang.php";
     }
 }
 
@@ -45,19 +45,19 @@ $captcha->createImage();
 
 
 	<?php
-	/** Validate captcha */
-	if (!empty($_REQUEST['captcha'])) {
-	    if (empty($_SESSION['captcha']) || trim(strtolower($_REQUEST['captcha'])) != $_SESSION['captcha']) {
-		$captcha_message = "Invalid captcha";
-		$style = "background-color: #FF606C";
-	    } else {
-		$captcha_message = "Valid captcha";
-		$style = "background-color: #CCFF99";
-	    }
+    /** Validate captcha */
+    if (!empty($_REQUEST['captcha'])) {
+        if (empty($_SESSION['captcha']) || trim(strtolower($_REQUEST['captcha'])) != $_SESSION['captcha']) {
+            $captcha_message = 'Invalid captcha';
+            $style = 'background-color: #FF606C';
+        } else {
+            $captcha_message = 'Valid captcha';
+            $style = 'background-color: #CCFF99';
+        }
 
-	    $request_captcha = htmlspecialchars($_REQUEST['captcha']);
+        $request_captcha = htmlspecialchars($_REQUEST['captcha']);
 
-	    echo <<<HTML
+        echo <<<HTML
         <div id="result" style="$style">
         <h2>$captcha_message</h2>
         <table>
@@ -72,9 +72,9 @@ $captcha->createImage();
         </table>
         </div>
 HTML;
-	    unset($_SESSION['captcha']);
-	}
-	?>
+        unset($_SESSION['captcha']);
+    }
+    ?>
 
 
 

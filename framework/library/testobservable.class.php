@@ -1,17 +1,20 @@
-<?php defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
+<?php
+
+defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
 /**
- * Kazinduzi Framework (http://framework.kazinduzi.com/)
+ * Kazinduzi Framework (http://framework.kazinduzi.com/).
  *
  * @author    Emmanuel Ndayiragije <endayiragije@gmail.com>
+ *
  * @link      http://kazinduzi.com
+ *
  * @copyright Copyright (c) 2010-2013 Kazinduzi. (http://www.kazinduzi.com)
  * @license   http://kazinduzi.com/page/license MIT License
- * @package   Kazinduzi
  */
-
-class Testobserver extends Observer {
-
-    public function update(&$sender, $arg) {
+class Testobserver extends Observer
+{
+    public function update(&$sender, $arg)
+    {
         switch ($arg) {
             case 'changed':
                 echo 'Changed<br />';
@@ -21,26 +24,27 @@ class Testobserver extends Observer {
                 echo 'Deleted<br />';
                 print_r($sender);
                 break;
-            default :
+            default:
                 print_r($sender);
                 break;
         }
     }
 }
 
-class TestObservable extends Observable {
-
-    public function changed() {
+class TestObservable extends Observable
+{
+    public function changed()
+    {
         echo 'Observable is changed<br/>';
         //Notify all attached observers to this
         $this->notifyAll('changed');
     }
+
     //
-    public function deleted() {
+    public function deleted()
+    {
         echo 'Observable is deleted<br/>';
         //Notify all attached observers to this
         $this->notifyAll('deleted');
     }
 }
-
-?>
