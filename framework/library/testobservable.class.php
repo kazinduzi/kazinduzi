@@ -15,11 +15,11 @@ class Testobserver extends Observer {
         switch ($arg) {
             case 'changed':
                 echo 'Changed<br />';
-                print_r(&$sender);
+                print_r($sender);
                 break;
             case 'deleted':
                 echo 'Deleted<br />';
-                print_r(&$sender);
+                print_r($sender);
                 break;
             default :
                 print_r($sender);
