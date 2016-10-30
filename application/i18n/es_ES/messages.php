@@ -1,7 +1,9 @@
-<?php defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
+<?php
 
-return array(
-    'spanish' => 'Español',
+defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
+
+return [
+    'spanish'       => 'Español',
     'hello, world!' => '¡Hola, mundo!',
-    'welcome' => 'Benvenito',
-);
+    'welcome'       => 'Benvenito',
+];

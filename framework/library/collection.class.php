@@ -1,18 +1,17 @@
 <?php
 /**
- * Kazinduzi Framework (http://framework.kazinduzi.com/)
+ * Kazinduzi Framework (http://framework.kazinduzi.com/).
  *
  * @author    Emmanuel Ndayiragije <endayiragije@gmail.com>
+ *
  * @link      http://kazinduzi.com
+ *
  * @copyright Copyright (c) 2010-2013 Kazinduzi. (http://www.kazinduzi.com)
  * @license   http://kazinduzi.com/page/license MIT License
- * @package   Kazinduzi
  */
-
-class Collection implements Countable, ArrayAccess, IteratorAggregate {
-
-    public $objectArray = Array();
-
+class Collection implements Countable, ArrayAccess, IteratorAggregate
+{
+    public $objectArray = [];
 
     public function doSomething()
     {
@@ -22,28 +21,38 @@ class Collection implements Countable, ArrayAccess, IteratorAggregate {
     //**these are the required iterator functions
     public function offsetExists($offset)
     {
-        if(isset($this->objectArray[$offset]))  return true;
-        else return false;
+        if (isset($this->objectArray[$offset])) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function &offsetGet($offset)
     {
-        if ($this->offsetExists($offset))  return $this->objectArray[$offset];
-        else return (false);
+        if ($this->offsetExists($offset)) {
+            return $this->objectArray[$offset];
+        } else {
+            return false;
+        }
     }
 
     public function offsetSet($offset, $value)
     {
-        if ($offset)  $this->objectArray[$offset] = $value;
-        else  $this->objectArray[] = $value;
+        if ($offset) {
+            $this->objectArray[$offset] = $value;
+        } else {
+            $this->objectArray[] = $value;
+        }
     }
 
     public function offsetUnset($offset)
     {
-        unset ($this->objectArray[$offset]);
+        unset($this->objectArray[$offset]);
     }
 
-    public function count() {
+    public function count()
+    {
         return count($this->objectArray);
     }
 
@@ -51,6 +60,4 @@ class Collection implements Countable, ArrayAccess, IteratorAggregate {
     {
         return new ArrayIterator($this->objectArray);
     }
-
-
 }

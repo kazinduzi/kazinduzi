@@ -1,6 +1,7 @@
 <?php
+
 defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
-/**
+/*
  * Kazinduzi Framework (http://framework.kazinduzi.com/)
  *
  * @author    Emmanuel Ndayiragije <endayiragije@gmail.com>
@@ -10,17 +11,17 @@ defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
  * @package   Kazinduzi
  */
 
-use Kazinduzi\Core\Controller;
 use Kazinduzi;
+use Kazinduzi\Core\Controller;
 
-class DefaultController extends Controller 
-{     
+class defaultController extends Controller
+{
     /**
-     * Constructor for loginController
+     * Constructor for loginController.
      */
-    public function __construct() 
+    public function __construct()
     {
-        parent::__construct();	        
+        parent::__construct();
         $this->setLayout('default/default');
         $this->Template->setViewSuffix('phtml');
     }
@@ -28,12 +29,12 @@ class DefaultController extends Controller
     // We check if they are logged in, generally this would be done in the constructor, but we want to allow customers to log out still
     // or still be able to either retrieve their password or anything else this controller may be extended to do
     // if they are logged in, we send them back to the dashboard by default, if they are not logging in
-    public function index() 
-    {        
-        $this->title = __('messages.welcome');        
-        $this->content = 'Welcome to Kazinduzi framework v' . Kazinduzi::version();        
+    public function index()
+    {
+        $this->title = __('messages.welcome');
+        $this->content = 'Welcome to Kazinduzi framework v'.Kazinduzi::version();
     }
-    
+
     public function test()
     {
         $data = ['token' => bin2hex(openssl_random_pseudo_bytes(16))];
@@ -41,5 +42,4 @@ class DefaultController extends Controller
         echo json_encode($data);
         die();
     }
-    
 }

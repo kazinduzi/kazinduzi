@@ -1,8 +1,9 @@
 <?php
+
 namespace Kazinduzi\Core;
 
 defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
-/**
+/*
  * Kazinduzi Framework (http://framework.kazinduzi.com/)
  *
  * @author    Emmanuel Ndayiragije <endayiragije@gmail.com>
@@ -13,10 +14,6 @@ defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
  */
 
 use Pimple\Container;
-use Kazinduzi\Core\Model;
-use Kazinduzi\Core\Request;
-use Kazinduzi\Core\Response;
-use Kazinduzi\Core\Template;
 
 abstract class Controller
 {
@@ -31,10 +28,10 @@ abstract class Controller
     private $action;
     private $controller;
     private $args;
-    private $params;    
+    private $params;
 
     protected $registry = null;
-    protected $methods = array();
+    protected $methods = [];
     protected $models;
     protected $Template;
 
@@ -43,10 +40,12 @@ abstract class Controller
 
     /**
      * Method to get a singleton controller instance.
+     *
      * @param	string	The name for the controller.
-     * @return	mixed	Controller derivative class.
+     *
+     * @return mixed Controller derivative class.
      */
-    public static function getInstance($Request, $Response) 
+    public static function getInstance($Request, $Response)
     {
         $controllerClassName = get_called_class();
         if (!empty(self::$instance)) {
@@ -58,20 +57,20 @@ abstract class Controller
             return self::$instance = new $controllerClassName();
         }
     }
-    
+
     /**
-     * Set DI Container
-     * 
+     * Set DI Container.
+     *
      * @param Container $container
      */
     public function setDIContainer(Container $container)
     {
         $this->container = $container;
     }
-    
+
     /**
-     * Get DI Container
-     * 
+     * Get DI Container.
+     *
      * @return Container
      */
     public function getDIContainer()
@@ -80,11 +79,12 @@ abstract class Controller
     }
 
     /**
-     * Methot to construct the controller
-     * @param Request $Request
+     * Methot to construct the controller.
+     *
+     * @param Request  $Request
      * @param Response $Response
      */
-    protected function __construct(Request $Request = null, Response $Response = null) 
+    protected function __construct(Request $Request = null, Response $Response = null)
     {
         $this->Request = $Request instanceof Request ? $Request : Request::getInstance();
         $this->params = $this->Request->getParams();
@@ -101,233 +101,235 @@ abstract class Controller
             }
         }
         $this->init();
-     }
+    }
 
     /**
-     * All controllers must contain an index method
+     * All controllers must contain an index method.
      */
     abstract public function index();
 
-    /**
-     *
-     */
-    public function init() 
+
+    public function init()
     {
-        
     }
 
     /**
      * Automatically executed before the controller action. Can be used to set
      * class properties, do authorization checks, and execute other custom code.
-     * @return  void
+     *
+     * @return void
      */
-    public function before() 
+    public function before()
     {
-        
     }
 
     /**
      * Automatically executed after the controller action. Can be used to apply
      * transformation to the Request Response, add extra output, and execute
      * other custom code.
-     * @return  void
+     *
+     * @return void
      */
-    public function after() 
+    public function after()
     {
-        
     }
 
     /**
-     *
-     * @param type $template
+     * @param type  $template
      * @param array $data
+     *
      * @return \Controller
      */
-    public function setTemplate($template, array $data = array()) 
+    public function setTemplate($template, array $data = [])
     {
         $this->Template->setFilename($template, $data);
+
         return $this;
     }
 
     /**
-     *
      * @return type
      */
-    public function getTemplate() 
+    public function getTemplate()
     {
         return $this->Template;
     }
 
     /**
-     *
      * @return type
      */
-    public function getLayout() 
+    public function getLayout()
     {
         return $this->Template->getLayout();
     }
 
     /**
-     *
      * @param type $name
      */
-    public function setLayout($name) 
+    public function setLayout($name)
     {
-       $this->Template->setLayout($name);
-       return $this;
-    }
+        $this->Template->setLayout($name);
 
-    /**
-     * Set the controller
-     * 
-     * @param string $controller
-     * @return \Controller
-     */
-    public function setController($controller) 
-    {
-        $this->controller = $controller;
         return $this;
     }
 
     /**
-     * Get the controller
+     * Set the controller.
+     *
+     * @param string $controller
+     *
+     * @return \Controller
+     */
+    public function setController($controller)
+    {
+        $this->controller = $controller;
+
+        return $this;
+    }
+
+    /**
+     * Get the controller.
      *
      * @return string
      */
-    public function getController() 
+    public function getController()
     {
         return $this->controller;
     }
 
     /**
-     *
      * @param type $action
+     *
      * @return type
      */
-    public function defaultAction($action = '') 
+    public function defaultAction($action = '')
     {
         if (!empty($action)) {
             $this->defaultAction = $action;
         }
+
         return $this->defaultAction;
     }
 
     /**
-     *
      * @param type $action
+     *
      * @return \Controller
      */
-    public function setAction($action) 
+    public function setAction($action)
     {
         $this->action = $action;
+
         return $this;
     }
 
     /**
-     *
      * @return type
      */
-    public function getAction() 
+    public function getAction()
     {
         if ($this->action) {
             return $this->action;
         }
     }
+
     /**
-     *
      * @param type $args
+     *
      * @return \Controller
      */
-    public function setArgs($args) 
+    public function setArgs($args)
     {
         $this->args = $args;
+
         return $this;
     }
+
     /**
-     *
      * @return type
      */
-    public function getArgs() 
+    public function getArgs()
     {
         return $this->args;
     }
 
     /**
-     *
      * @param int $index
+     *
      * @return mixed
      */
-    public function getArg($index = 0) 
+    public function getArg($index = 0)
     {
         if (!isset($this->args[$index])) {
-            return null;
+            return;
         }
+
         return $this->args[$index];
     }
 
     /**
-     * Get HTTP_Request object
+     * Get HTTP_Request object.
      *
      * @return Request
      */
-    public function getRequest() 
+    public function getRequest()
     {
         return $this->Request ? $this->Request : Request::getInstance();
     }
 
     /**
-     * Get HTTP_Response
+     * Get HTTP_Response.
      *
      * @return Response
      */
-    public function getResponse() 
+    public function getResponse()
     {
         return $this->Response ? $this->Response : Response::getInstance();
     }
 
     /**
-     *
      * @param type $name
      * @param type $config
+     *
      * @return type
      */
-    protected function createModel($name, $config = array()) 
+    protected function createModel($name, $config = [])
     {
         $modelName = preg_replace('/[^A-Z0-9_]/i', '', $name);
+
         return $result = Model::getInstance($modelName, $config);
     }
 
     /**
-     *
      * @param string $name
-     * @param array $config
+     * @param array  $config
+     *
      * @return \Model
      */
-    public function getModel($name = '', $config = array()) 
+    public function getModel($name = '', $config = [])
     {
         if (empty($name)) {
             $name = $this->getName();
         }
+
         return $this->createModel($name, $config);
     }
 
     /**
-     *
      * @param type $url
      * @param type $status
      */
-    public function redirect($url, $status = 302) 
+    public function redirect($url, $status = 302)
     {
-        header('Status: ' . $status);
-        header('Location: ' . str_replace('&amp;', '&', $url));
+        header('Status: '.$status);
+        header('Location: '.str_replace('&amp;', '&', $url));
         exit();
     }
 
     /**
-     *
      * @return type
      */
-    public function getName() 
+    public function getName()
     {
         if (!$this->name) {
             $r = null;
@@ -336,6 +338,7 @@ abstract class Controller
             }
             $this->name = strtolower($r[1]);
         }
+
         return $this->name;
     }
 
@@ -345,14 +348,17 @@ abstract class Controller
      * the dispatching will be executed as follows:
      * - $this->before(),
      * - $this->executeAction(),
-     * - $this->after()
+     * - $this->after().
+     *
      * @param string $action
+     *
      * @throws Exception
+     *
      * @return void
      */
-    public function executeAction($action) 
+    public function executeAction($action)
     {
-        try{
+        try {
             $this->before();
             $this->{$action}($this->getArgs());
             $this->after();
@@ -361,95 +367,101 @@ abstract class Controller
         }
     }
 
-
     /**
      * Method to run the requested action.
      * Execute first the requested action,
-     * then wrap the execution of the action within the display method of the template engine
-     * 
+     * then wrap the execution of the action within the display method of the template engine.
+     *
      * @return void
      */
-    public function run() 
+    public function run()
     {
-        try{                     
+        try {
             $this->executeAction($this->getAction());
             if ($this->isLayoutDisplayed()) {
                 $this->Template->setLayout($this->getLayout());
                 $this->Template->display();
             } else {
                 $this->Template->render();
-            }                    
+            }
         } catch (Exception $e) {
             throw $e;
         }
     }
 
     /**
-     *
      * @return type
      */
-    protected function isLayoutDisplayed() 
+    protected function isLayoutDisplayed()
     {
         return $this->_in_layout_display === true;
     }
 
     /**
-     *
      * @param type $flag
+     *
      * @return \Controller
      */
-    protected function setLayoutDisplayed($flag = true) 
+    protected function setLayoutDisplayed($flag = true)
     {
-        $this->_in_layout_display = (bool)$flag;
+        $this->_in_layout_display = (bool) $flag;
+
         return $this;
     }
 
     /**
      * Prevent cloning the controller
-     * Declaring this magic method __clone will prevent all attempt to clone this
+     * Declaring this magic method __clone will prevent all attempt to clone this.
+     *
      * @return void
      */
     private function __clone()
     {
-        
     }
 
     /**
-     * Magic set data of the controller
+     * Magic set data of the controller.
+     *
      * @param string $key
-     * @param mixed $value
+     * @param mixed  $value
      */
-    public function __set($key, $value) 
+    public function __set($key, $value)
     {
-       $this->Template->__set($key, $value);
+        $this->Template->__set($key, $value);
     }
 
     /**
-     * Magically get data of the controller
+     * Magically get data of the controller.
+     *
      * @param string $key
+     *
      * @return mixed | null
      */
-    public function  __get($key) 
+    public function __get($key)
     {
         return $this->Template->__get($key);
-        return null;
     }
 
     /**
-     * Magic method __isset, overloading the isset method
+     * Magic method __isset, overloading the isset method.
+     *
      * @param mixed $name
+     *
      * @return mixed
      */
-    public function  __isset($name) 
+    public function __isset($name)
     {
-         return $this->Template->__isset($name);
+        return $this->Template->__isset($name);
     }
+
     /**
-     * Magic method to be triggered when unset function is called
+     * Magic method to be triggered when unset function is called.
+     *
      * @param string $name
+     *
      * @return void
      */
-    public function  __unset($name) 
+    public function __unset($name)
     {
         $this->Template->__unset($name);
     }
@@ -458,44 +470,42 @@ abstract class Controller
      * Forces the user's browser not to cache the results of the current Request.
      *
      * @return void
-     * @access protected
      */
-    protected function disableCache() 
+    protected function disableCache()
     {
-        header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-        header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-        header("Cache-Control: no-store, no-cache, must-revalidate");
-        header("Cache-Control: post-check=0, pre-check=0", false);
-        header("Pragma: no-cache");
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+        header('Cache-Control: no-store, no-cache, must-revalidate');
+        header('Cache-Control: post-check=0, pre-check=0', false);
+        header('Pragma: no-cache');
     }
 
     /**
-     *
      * @param type $object
      */
-    public function inspect($object) 
+    public function inspect($object)
     {
         $methods = get_class_methods($object);
         $data = get_class_vars(get_class($object));
         $odata = get_object_vars($object);
         $parent = get_parent_class($object);
-        $output = 'Parent class: ' . $parent . "\n\n";
+        $output = 'Parent class: '.$parent."\n\n";
         $output .= "Methods:\n";
         $output .= "--------\n";
         foreach ($methods as $method) {
             $meth = new ReflectionMethod(get_class($object), $method);
-            $output .= $method . "\n";
+            $output .= $method."\n";
             $output .= $meth->__toString();
         }
         $output .= "\nClass data:\n";
         $output .= "-----------\n";
         foreach ($data as $name => $value) {
-            $output .= $name . ' = ' . print_r($value, 1) . "\n";
+            $output .= $name.' = '.print_r($value, 1)."\n";
         }
         $output .= "\nObject data:\n";
         $output .= "------------\n";
         foreach ($odata as $name => $value) {
-            $output .= $name . ' = ' . print_r($value, 1) . "\n";
+            $output .= $name.' = '.print_r($value, 1)."\n";
         }
         echo '<pre>', $output, '</pre>';
     }

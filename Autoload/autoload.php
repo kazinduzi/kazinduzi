@@ -1,15 +1,16 @@
 <?php
+
 spl_autoload_register(function ($class) {
     // the package namespace
     $ns = 'Kazinduzi\Autoload';
 
     // what prefixes should be recognized?
-    $prefixes = array(
-        "{$ns}\\" => array(
-            __DIR__ . '/src',
-            __DIR__ . '/tests',
-        ),
-    );
+    $prefixes = [
+        "{$ns}\\" => [
+            __DIR__.'/src',
+            __DIR__.'/tests',
+        ],
+    ];
 
     // go through the prefixes
     foreach ($prefixes as $prefix => $dirs) {
@@ -24,17 +25,17 @@ spl_autoload_register(function ($class) {
         $class = substr($class, $prefix_len);
 
         // a partial filename
-        $part = str_replace('\\', DIRECTORY_SEPARATOR, $class) . '.php';
+        $part = str_replace('\\', DIRECTORY_SEPARATOR, $class).'.php';
 
         // go through the directories to find classes
         foreach ($dirs as $dir) {
             $dir = str_replace('/', DIRECTORY_SEPARATOR, $dir);
-            $file = $dir . DIRECTORY_SEPARATOR . $part;
+            $file = $dir.DIRECTORY_SEPARATOR.$part;
             if (is_readable($file)) {
                 require $file;
+
                 return;
             }
         }
     }
-
 });

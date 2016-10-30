@@ -1,6 +1,7 @@
-<?php defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
+<?php
 
-class Kazinduzi extends Kazinduzi\Core\KazinduziBase 
+defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
+
+class kazinduzi extends Kazinduzi\Core\KazinduziBase
 {
-    
 }

@@ -1,23 +1,23 @@
 <?php
 /**
- * Kazinduzi Framework (http://framework.kazinduzi.com/)
+ * Kazinduzi Framework (http://framework.kazinduzi.com/).
  *
  * @author    Emmanuel Ndayiragije <endayiragije@gmail.com>
+ *
  * @link      http://kazinduzi.com
+ *
  * @copyright Copyright (c) 2010-2013 Kazinduzi. (http://www.kazinduzi.com)
  * @license   http://kazinduzi.com/page/license MIT License
- * @package   Kazinduzi
  */
-
 namespace Kazinduzi\Cache;
 
-/**
+/*
  * Description of Memcache
  *
  * @author Emmanuel Ndayiragije <endayiragije@gmail.com>
  */
 
-use \Memcache;
+use Memcache;
 
 class MemcacheCache extends AbstractCache
 {
@@ -25,26 +25,27 @@ class MemcacheCache extends AbstractCache
      * @var Memcache
      */
     private $memcache;
-        
+
     /**
-     * Set memcache instance
+     * Set memcache instance.
+     *
      * @param Memcache $memcache
      */
     public function setMemcache(Memcache $memcache)
     {
         $this->memcache = $memcache;
     }
-    
+
     /**
-     * Get Memcache instance
-     * 
+     * Get Memcache instance.
+     *
      * @return Memcache
      */
     public function getMemcache()
     {
         return $this->memcache;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -52,9 +53,9 @@ class MemcacheCache extends AbstractCache
     {
         $flags = null;
         $this->memcache->get($key, $flags);
-        
+
         //if memcache has changed the value of "flags", it means the value exists
-        return ($flags !== null);
+        return $flags !== null;
     }
 
     /**
@@ -63,7 +64,7 @@ class MemcacheCache extends AbstractCache
     protected function doDelete($key)
     {
         // Memcache::delete() returns false if entry does not exist
-        return $this->memcache->delete($key) || ! $this->doContains($key);
+        return $this->memcache->delete($key) || !$this->doContains($key);
     }
 
     /**
@@ -81,7 +82,7 @@ class MemcacheCache extends AbstractCache
     {
         return $this->memcache->flush();
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -90,7 +91,8 @@ class MemcacheCache extends AbstractCache
         if ($ttl > 30 * 24 * 3600) {
             $ttl = time() + $ttl;
         }
-        return $this->memcache->set($key, $data, 0, (int)$ttl);
+
+        return $this->memcache->set($key, $data, 0, (int) $ttl);
     }
 
     /**
@@ -99,13 +101,13 @@ class MemcacheCache extends AbstractCache
     protected function doGetStats()
     {
         $stats = $this->memcache->getStats();
-        return array(
-            CacheInterface::STATS_HITS => $stats['get_hits'],
-            CacheInterface::STATS_MISSES => $stats['get_misses'],
-            CacheInterface::STATS_UPTIME => $stats['uptime'],
-            CacheInterface::STATS_MEMORY_USAGE => $stats['bytes'],
-            CacheInterface::STATS_MEMORY_AVAILABLE => $stats['limit_maxbytes'],
-        );
-    }    
 
+        return [
+            CacheInterface::STATS_HITS             => $stats['get_hits'],
+            CacheInterface::STATS_MISSES           => $stats['get_misses'],
+            CacheInterface::STATS_UPTIME           => $stats['uptime'],
+            CacheInterface::STATS_MEMORY_USAGE     => $stats['bytes'],
+            CacheInterface::STATS_MEMORY_AVAILABLE => $stats['limit_maxbytes'],
+        ];
+    }
 }
