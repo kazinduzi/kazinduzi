@@ -2,6 +2,8 @@
 
 defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
 
+use Kazinduzi\Core\Kazinduzi;
+
 /**
  * Kazinduzi Framework (http://framework.kazinduzi.com/).
  *

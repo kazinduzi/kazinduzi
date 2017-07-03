@@ -2,6 +2,8 @@
 
 defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
 
+use Kazinduzi\Core\Kazinduzi;
+
 /**
  * Kazinduzi Framework (http://framework.kazinduzi.com/).
  *
@@ -59,7 +61,7 @@ class Auth
      */
     public function __construct()
     {
-        $this->session = \Kazinduzi::session();
+        $this->session = Kazinduzi::session();
     }
 
     /**

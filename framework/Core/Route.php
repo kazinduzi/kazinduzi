@@ -2,7 +2,7 @@
 
 namespace Kazinduzi\Core;
 
-defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
+use Kazinduzi\Core\Kazinduzi;
 
 /**
  * Routes are used to determine the controller and action for a requested URI.
@@ -165,7 +165,7 @@ class Route
         if ($save === true) {
             Kohana::cache('Route::cache()', self::$_routes);
         } else {
-            if ($routes = \Kazinduzi::cache('Route::cache()')) {
+            if ($routes = Kazinduzi::cache('Route::cache()')) {
                 self::$_routes = $routes;
 
                 return self::$cache = true;

@@ -55,9 +55,15 @@ array_push($includePaths, get_include_path());
 set_include_path(implode(PATH_SEPARATOR, $includePaths));
 
 require_once __DIR__.'/loader.php';
-require_once __DIR__.'/kazinduzi.php';
 require_once KAZINDUZI_PATH.'/includes/init.php';
 require_once KAZINDUZI_PATH.'/includes/common_functions.php';
+
+use Kazinduzi\Core\Kazinduzi;
+use Kazinduzi\Db\Database;
+use Kazinduzi\Session\Session;
+use Kazinduzi\Cache\FileCache;
+use Kazinduzi\Cache\MemcacheCached;
+use Kazinduzi\Cache\ApcCache;
 
 if (is_file(__DIR__.'/INSTALL_LOCK')) {
     redirect('/install/index.php');
@@ -76,12 +82,11 @@ $session = Kazinduzi::session();
 $session->start();
 require_once APP_PATH . '/bootstrap.php';
 
-
-$db = \Kazinduzi\Db\Database::getInstance();
+$db = Database::getInstance();
 $db->select('*')->from('kazinduzi')->where('ip_adress = \'192.168.1.28\'')->buildQuery();
 echo $db->getQueryString();
 
-$sess = Kazinduzi\Session\Session::instance();
+$sess = Session::instance();
 var_dump($sess->getId());
 
 /*
@@ -108,7 +113,7 @@ try {
 
 // Test APC Caching
 try {
-    $apcCache = new Kazinduzi\Cache\ApcCache();
+    $apcCache = new ApcCache();
     $apcCache->setNamespace('demo');
     $apcCache->persist('timestamp', new DateTime('now'), 3600);
     $apcCache->persistMultiple(['test 1' => range(1, 10), 'test 2' => new stdClass()]);
@@ -121,7 +126,7 @@ try {
 // Test File Caching
 try {
     $directory = __DIR__.'/application/cache';
-    $fileCache = new Kazinduzi\Cache\FileCache($directory);
+    $fileCache = new FileCache($directory);
     $fileCache->setNamespace('Filesystem');
     $fileCache->persist('timestamp', new DateTime('now'), 3600);
     $fileCache->persist('sess', $sess, 3600);

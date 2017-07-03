@@ -1,6 +1,9 @@
 <?php
 
-defined('KAZINDUZI_PATH') or die('No direct access script allowed');
+defined('KAZINDUZI_PATH') || die('No direct access script allowed');
+
+use Kazinduzi\Core\Kazinduzi;
+
 /**
  * Kazinduzi Framework (http://framework.kazinduzi.com/).
  *
@@ -81,7 +84,7 @@ final class SessionDatabase extends Session
     public function getDbo()
     {
         if (null === $this->db) {
-            $this->db = \Kazinduzi::db();
+            $this->db = Kazinduzi::db();
         }
 
         return $this->db;

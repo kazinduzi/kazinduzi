@@ -1,5 +1,4 @@
 <?php
-
 defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
 /*
  * Kazinduzi Framework (http://framework.kazinduzi.com/)
@@ -11,10 +10,10 @@ defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
  * @package   Kazinduzi
  */
 
-use Kazinduzi;
 use Kazinduzi\Core\Controller;
+use Kazinduzi\Core\Kazinduzi;
 
-class defaultController extends Controller
+class DefaultController extends Controller
 {
     /**
      * Constructor for loginController.
@@ -32,7 +31,7 @@ class defaultController extends Controller
     public function index()
     {
         $this->title = __('messages.welcome');
-        $this->content = 'Welcome to Kazinduzi framework v'.Kazinduzi::version();
+        $this->content = 'Welcome to Kazinduzi framework v' . Kazinduzi::version();
     }
 
     public function test()

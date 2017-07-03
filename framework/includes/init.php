@@ -1,6 +1,9 @@
 <?php
 
 defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
+
+use Kazinduzi\Core\Kazinduzi;
+
 /*
  * Kazinduzi Framework (http://framework.kazinduzi.com/)
  *
@@ -11,4 +14,4 @@ defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
  * @package   Kazinduzi
  */
 // Send Powered By Header.
-header('X-Powered-By: Kazinduzi framework ver.'.Kazinduzi::VERSION.' ('.Kazinduzi::CODENAME.')', false);
+header('X-Powered-By: Kazinduzi framework ver.'.Kazinduzi::VERSION.' (' . Kazinduzi::CODENAME . ')', false);

@@ -192,7 +192,7 @@ if (!function_exists('escapeHtml')) {
             $htmlSpecialCharsFlags |= ENT_SUBSTITUTE;
         }
 
-        return htmlspecialchars($string, $htmlSpecialCharsFlags, Kazinduzi::$encoding);
+        return htmlspecialchars($string, $htmlSpecialCharsFlags, Kazinduzi\Core\Kazinduzi::$encoding);
     }
 }
 

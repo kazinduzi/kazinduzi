@@ -10,10 +10,13 @@ defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
  * @license   http://kazinduzi.com/page/license MIT License
  * @package   Kazinduzi
  */
-sanitize_input();
-Kazinduzi::init();
 
 use Kazinduzi\IoC\Container;
+use Kazinduzi\Core\Kazinduzi;
+use Kazinduzi\Core\Dispatcher;
+
+sanitize_input();
+Kazinduzi::init();
 
 $container = new Container();
 $container['db'] = function () {
@@ -26,5 +29,5 @@ $container['cache'] = function () {
     return Kazinduzi::cache();
 };
 
-$dispatcher = new \Kazinduzi\Core\Dispatcher($container);
+$dispatcher = new Dispatcher($container);
 $dispatcher->dispatch();

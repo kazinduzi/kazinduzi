@@ -2,6 +2,8 @@
 
 namespace Kazinduzi\Db;
 
+use Kazinduzi\Core\Kazinduzi;
+
 /*
  * Kazinduzi Framework (http://framework.kazinduzi.com/)
  *
@@ -213,7 +215,7 @@ class Database extends DbActiveRecord
     protected function getConfigValue($item = null)
     {
         if (empty($this->config)) {
-            $this->config = \Kazinduzi::getConfig('database')->toArray();
+            $this->config = Kazinduzi::getConfig('database')->toArray();
         }
 
         return isset($item) ? $this->config[$item] : $this->config;

@@ -92,12 +92,12 @@ abstract class Controller
         $this->Template = new Template();
         // Get the public methods in this class.
         $reflector = new \ReflectionClass($this);
-        $reflectorName = $reflector->getName();
+        // $reflectorName = $reflector->getName();
         $reflectorMethods = $reflector->getMethods(\ReflectionMethod::IS_PUBLIC);
         foreach ($reflectorMethods as $reflectorMethod) {
             $methodName = $reflectorMethod->getName();
-            if (!in_array($methodName, get_class_methods(self::class)) || $methodName == self::DEFAULT_ACTION) {
-                $this->methods[] = strtolower($methodName);
+            if (!in_array($methodName, get_class_methods(self::class)) || $methodName === self::DEFAULT_ACTION) {
+                $this->methods[] = $methodName;
             }
         }
         $this->init();

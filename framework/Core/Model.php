@@ -21,6 +21,7 @@ defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
 
 use IteratorAggregate;
 use Kazinduzi\Db\DbActiveRecord;
+use Kazinduzi\Core\Kazinduzi;
 
 abstract class Model implements IteratorAggregate
 {
@@ -765,7 +766,7 @@ abstract class Model implements IteratorAggregate
         $query .= !empty($args['WHERE']) ? ' WHERE '.$args['WHERE'] : '';
         $query .= !empty($args['ORDERBY']) ? ' ORDER BY '.$args['ORDERBY'] : '';
         $query .= !empty($args['LIMIT']) ? ' LIMIT '.$args['LIMIT'] : '';
-        $db = \Kazinduzi::db()->clear();
+        $db = Kazinduzi::db()->clear();
         $db->setQuery($query);
         if ([] !== $results = $db->fetchAssocList()) {
             $class = get_called_class();

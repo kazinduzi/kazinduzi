@@ -1,6 +1,7 @@
 <?php
-
 defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
+
+use Kazinduzi\Core\Kazinduzi;
 
 class Html
 {

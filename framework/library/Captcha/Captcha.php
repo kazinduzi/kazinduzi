@@ -12,7 +12,7 @@
  */
 namespace framework\library\Captcha;
 
-use Kazinduzi;
+use Kazinduzi\Core\Kazinduzi;
 
 /**
  * Captcha class.

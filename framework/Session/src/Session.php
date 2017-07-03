@@ -51,7 +51,7 @@ defined('KAZINDUZI_PATH') || die('No direct access script allowed');
 
 use Countable;
 use IteratorAggregate;
-use Kazinduzi;
+use Kazinduzi\Core\Kazinduzi;
 use Kazinduzi\Core\Request;
 
 abstract class Session implements IteratorAggregate, Countable

@@ -15,7 +15,7 @@ defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
  */
 
 use Inflector;
-use Kazinduzi;
+use Kazinduzi\Core\Kazinduzi;
 use Kazinduzi\IoC\Container;
 
 class FrontController

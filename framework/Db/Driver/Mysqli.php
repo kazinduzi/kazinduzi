@@ -1,7 +1,7 @@
 <?php
 namespace Kazinduzi\Db\Driver;
 
-use Kazinduzi;
+use Kazinduzi\Core\Kazinduzi;
 use Kazinduzi\Db\Database;
 use Exception;
 

@@ -86,7 +86,7 @@ final class Database extends Session
     public function getDbo()
     {
         if (null === $this->db) {
-            $this->db = \Kazinduzi::db();
+            $this->db = Kazinduzi::db();
         }
 
         return $this->db;

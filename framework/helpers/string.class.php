@@ -1,6 +1,7 @@
 <?php
-
 defined('KAZINDUZI_PATH') or die('No direct access script allowed');
+
+use Kazinduzi\Core\Kazinduzi;
 
 /**
  * Description of url.
