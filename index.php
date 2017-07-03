@@ -89,6 +89,22 @@ echo $db->getQueryString();
 $sess = Session::instance();
 var_dump($sess->getId());
 
+
+// Testing twig templating
+$loader = new Twig_Loader_Array(array(
+    'index' => 'Hello {{ name }}!',
+));
+$twig = new Twig_Environment($loader);
+echo $twig->render('index', array('name' => 'Fabien'));
+
+// Twig templates
+$loader = new Twig_Loader_Filesystem(APP_PATH . '/twig/templates');
+$twig = new Twig_Environment($loader, array(
+    'cache' => APP_PATH . '/twig/cache',
+));
+
+echo $twig->render('index.html', array('name' => 'Fabien'));
+
 /*
 // Testing Memcached Caching
 try {
