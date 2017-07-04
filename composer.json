@@ -2,7 +2,7 @@
 	"name": "Emmanuel Ndayiragije <endayiragije@gmail.com>",
 	
 	"require": {
-		"twig/twig": "^2.0"
+		"twig/twig": "1.31.*"
 	},
 	
 	"config": {
