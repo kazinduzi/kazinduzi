@@ -6,14 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class KazinduziTest extends TestCase
 {
-    /**
-     * 
-     */
-    public function testAppName()
-    {
-        $this->assertEquals('Kazinduzi', Kazinduzi::getAppName());
-    }
-
+    
     /**
      * 
      */
