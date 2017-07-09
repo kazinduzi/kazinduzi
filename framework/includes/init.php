@@ -1,6 +1,6 @@
 <?php
 
-defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
+//defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
 
 use Kazinduzi\Core\Kazinduzi;
 

@@ -2,7 +2,7 @@
 
 namespace Kazinduzi\Core;
 
-defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
+//defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
 
 /*
  * Kazinduzi Framework (http://framework.kazinduzi.com/)

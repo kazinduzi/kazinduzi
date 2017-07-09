@@ -2,23 +2,31 @@
 namespace Kazinduzi\Tests;
 
 use Kazinduzi\Core\Kazinduzi;
+use PHPUnit\Framework\TestCase;
 
-class KazinduziTest extends \PHPUnit_Framework_TestCase
+class KazinduziTest extends TestCase
 {
     /**
      * 
      */
-    public static function setupBeforeClass()
+    public function testAppName()
     {
-        // ini_set('log_errors', 0);
-        ini_set('error_log', tempnam(sys_get_temp_dir(), 'kazinduzi'));
+        $this->assertEquals('Kazinduzi', Kazinduzi::getAppName());
     }
-    
+
     /**
      * 
      */
-    public static function tearDownAfterClass()
-    {
-        // ini_set('log_errors', 1);
+    public function testPushAndPop()
+    {     
+        $stack = [];
+        $this->assertEquals(0, count($stack));
+
+        array_push($stack, 'foo');
+        $this->assertEquals('foo', $stack[count($stack)-1]);
+        $this->assertEquals(1, count($stack));
+
+        $this->assertEquals('foo', array_pop($stack));
+        $this->assertEquals(0, count($stack));
     }
 }
