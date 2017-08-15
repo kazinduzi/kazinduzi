@@ -15,8 +15,8 @@ defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
 
 use Kazinduzi\IoC\Container;
 
-abstract class Controller
-{
+abstract class Controller {
+
     const DEFAULT_ACTION = 'index';
     const DEFAULT_CONTROLLER = 'index';
 
@@ -84,12 +84,13 @@ abstract class Controller
      * @param Request  $Request
      * @param Response $Response
      */
-    protected function __construct(Request $Request = null, Response $Response = null)
+    protected function __construct(Request $Request = null, Response $Response = null, $container)
     {
+        $this->container = $container;
         $this->Request = $Request instanceof Request ? $Request : Request::getInstance();
         $this->params = $this->Request->getParams();
         $this->Response = $Response instanceof Response ? $Response : Response::getInstance();
-        $this->Template = new Template();
+        $this->Template = $container->get('templating');
         // Get the public methods in this class.
         $reflector = new \ReflectionClass($this);
         // $reflectorName = $reflector->getName();
@@ -108,9 +109,8 @@ abstract class Controller
      */
     abstract public function index();
 
-
-    public function init()
-    {
+    public function init() {
+        
     }
 
     /**
@@ -216,8 +216,7 @@ abstract class Controller
      *
      * @return \Controller
      */
-    public function setAction($action)
-    {
+    public function setAction($action) {
         $this->action = $action;
 
         return $this;
@@ -226,8 +225,7 @@ abstract class Controller
     /**
      * @return type
      */
-    public function getAction()
-    {
+    public function getAction() {
         if ($this->action) {
             return $this->action;
         }
@@ -238,18 +236,15 @@ abstract class Controller
      *
      * @return \Controller
      */
-    public function setArgs($args)
-    {
+    public function setArgs($args) {
         $this->args = $args;
-
         return $this;
     }
 
     /**
      * @return type
      */
-    public function getArgs()
-    {
+    public function getArgs() {
         return $this->args;
     }
 
@@ -258,12 +253,10 @@ abstract class Controller
      *
      * @return mixed
      */
-    public function getArg($index = 0)
-    {
+    public function getArg($index = 0) {
         if (!isset($this->args[$index])) {
             return;
         }
-
         return $this->args[$index];
     }
 
@@ -272,8 +265,7 @@ abstract class Controller
      *
      * @return Request
      */
-    public function getRequest()
-    {
+    public function getRequest() {
         return $this->Request ? $this->Request : Request::getInstance();
     }
 
@@ -282,8 +274,7 @@ abstract class Controller
      *
      * @return Response
      */
-    public function getResponse()
-    {
+    public function getResponse() {
         return $this->Response ? $this->Response : Response::getInstance();
     }
 
@@ -293,10 +284,8 @@ abstract class Controller
      *
      * @return type
      */
-    protected function createModel($name, $config = [])
-    {
+    protected function createModel($name, $config = []) {
         $modelName = preg_replace('/[^A-Z0-9_]/i', '', $name);
-
         return $result = Model::getInstance($modelName, $config);
     }
 
@@ -306,12 +295,10 @@ abstract class Controller
      *
      * @return \Model
      */
-    public function getModel($name = '', $config = [])
-    {
+    public function getModel($name = '', $config = []) {
         if (empty($name)) {
             $name = $this->getName();
         }
-
         return $this->createModel($name, $config);
     }
 
@@ -319,18 +306,16 @@ abstract class Controller
      * @param type $url
      * @param type $status
      */
-    public function redirect($url, $status = 302)
-    {
-        header('Status: '.$status);
-        header('Location: '.str_replace('&amp;', '&', $url));
+    public function redirect($url, $status = 302) {
+        header('Status: ' . $status);
+        header('Location: ' . str_replace('&amp;', '&', $url));
         exit();
     }
 
     /**
      * @return type
      */
-    public function getName()
-    {
+    public function getName() {
         if (!$this->name) {
             $r = null;
             if (!preg_match('/(.*)Controller/i', get_class($this), $r)) {
@@ -338,7 +323,6 @@ abstract class Controller
             }
             $this->name = strtolower($r[1]);
         }
-
         return $this->name;
     }
 
@@ -356,8 +340,7 @@ abstract class Controller
      *
      * @return void
      */
-    public function executeAction($action)
-    {
+    public function executeAction($action) {
         try {
             $this->before();
             $this->{$action}($this->getArgs());
@@ -374,15 +357,14 @@ abstract class Controller
      *
      * @return void
      */
-    public function run()
-    {
+    public function run() {
         try {
             $this->executeAction($this->getAction());
             if ($this->isLayoutDisplayed()) {
-                $this->Template->setLayout($this->getLayout());
-                $this->Template->display();
+                $this->getTemplate()->setLayout($this->getLayout());
+                $this->getTemplate()->display();
             } else {
-                $this->Template->render();
+                $this->getTemplate()->render();
             }
         } catch (Exception $e) {
             throw $e;
@@ -392,8 +374,7 @@ abstract class Controller
     /**
      * @return type
      */
-    protected function isLayoutDisplayed()
-    {
+    protected function isLayoutDisplayed() {
         return $this->_in_layout_display === true;
     }
 
@@ -402,8 +383,7 @@ abstract class Controller
      *
      * @return \Controller
      */
-    protected function setLayoutDisplayed($flag = true)
-    {
+    protected function setLayoutDisplayed($flag = true) {
         $this->_in_layout_display = (bool) $flag;
 
         return $this;
@@ -415,8 +395,8 @@ abstract class Controller
      *
      * @return void
      */
-    private function __clone()
-    {
+    private function __clone() {
+        
     }
 
     /**
@@ -425,9 +405,8 @@ abstract class Controller
      * @param string $key
      * @param mixed  $value
      */
-    public function __set($key, $value)
-    {
-        $this->Template->__set($key, $value);
+    public function __set($key, $value) {
+        $this->getTemplate()->__set($key, $value);
     }
 
     /**
@@ -437,9 +416,8 @@ abstract class Controller
      *
      * @return mixed | null
      */
-    public function __get($key)
-    {
-        return $this->Template->__get($key);
+    public function __get($key) {
+        return $this->getTemplate()->__get($key);
     }
 
     /**
@@ -449,9 +427,8 @@ abstract class Controller
      *
      * @return mixed
      */
-    public function __isset($name)
-    {
-        return $this->Template->__isset($name);
+    public function __isset($name) {
+        return $this->getTemplate()->__isset($name);
     }
 
     /**
@@ -461,9 +438,8 @@ abstract class Controller
      *
      * @return void
      */
-    public function __unset($name)
-    {
-        $this->Template->__unset($name);
+    public function __unset($name) {
+        $this->getTemplate()->__unset($name);
     }
 
     /**
@@ -471,10 +447,9 @@ abstract class Controller
      *
      * @return void
      */
-    protected function disableCache()
-    {
+    protected function disableCache() {
         header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-        header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
         header('Cache-Control: no-store, no-cache, must-revalidate');
         header('Cache-Control: post-check=0, pre-check=0', false);
         header('Pragma: no-cache');
@@ -483,30 +458,30 @@ abstract class Controller
     /**
      * @param type $object
      */
-    public function inspect($object)
-    {
+    public function inspect($object) {
         $methods = get_class_methods($object);
         $data = get_class_vars(get_class($object));
         $odata = get_object_vars($object);
         $parent = get_parent_class($object);
-        $output = 'Parent class: '.$parent."\n\n";
+        $output = 'Parent class: ' . $parent . "\n\n";
         $output .= "Methods:\n";
         $output .= "--------\n";
         foreach ($methods as $method) {
             $meth = new ReflectionMethod(get_class($object), $method);
-            $output .= $method."\n";
+            $output .= $method . "\n";
             $output .= $meth->__toString();
         }
         $output .= "\nClass data:\n";
         $output .= "-----------\n";
         foreach ($data as $name => $value) {
-            $output .= $name.' = '.print_r($value, 1)."\n";
+            $output .= $name . ' = ' . print_r($value, 1) . "\n";
         }
         $output .= "\nObject data:\n";
         $output .= "------------\n";
         foreach ($odata as $name => $value) {
-            $output .= $name.' = '.print_r($value, 1)."\n";
+            $output .= $name . ' = ' . print_r($value, 1) . "\n";
         }
         echo '<pre>', $output, '</pre>';
     }
+
 }

@@ -1,8 +1,7 @@
 <?php
-
 namespace Kazinduzi\Core;
 
-defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
+use Kazinduzi\Templating\TemplatingEngine;
 
 /*
  * Kazinduzi Framework (http://framework.kazinduzi.com/)
@@ -42,7 +41,7 @@ class Template
     /**
      * @var string
      */
-    private $viewSuffix = 'tpl';
+    private $viewSuffix = 'phtml';
     /**
      * @var string
      */
@@ -51,6 +50,11 @@ class Template
      * @var type
      */
     protected $FrontController;
+    
+    /**
+     * @var TemplingEngine
+     */
+    private $templatingEngine;
 
     /**
      * Singleton for getting instance of the Template for kazinduzi action requested.
@@ -82,6 +86,22 @@ class Template
        }
        $this->FrontController = FrontController::getInstance();
    }
+   
+    public function setTemplatingEngine(TemplatingEngine $templatingEngine) 
+    {
+        $this->templatingEngine = $templatingEngine;
+        return $this;
+    }
+    
+    /**
+     * Get TemplatingEngine
+     * 
+     * @return TemplatingEngine
+     */
+    public function getTemplatingEngine()
+    {
+        return $this->templatingEngine;
+    }
 
     /**
      * Sets the view filename.
@@ -94,12 +114,7 @@ class Template
      */
     public function setFilename($file)
     {
-        $path_to_file = APP_PATH.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.$file.'.'.$this->viewSuffix;
-        if (!is_file($path_to_file) || !is_readable($path_to_file)) {
-            throw new InvalidArgumentException('The template ['.$file.'.'.$this->viewSuffix.'] is invalid.');
-        }
-        $this->file = realpath($path_to_file);
-
+        $this->file = $file . '.' . $this->viewSuffix;
         return $this;
     }
 
@@ -317,34 +332,21 @@ class Template
      * @see render the template voor the specific
      * controller
      */
-    public function render()
+    public function render($filename = null)
     {
         $view_file = $this->FrontController->getAction();
-        if (!$this->file) {
+        if (! $this->file) {
             $controller_path = $this->FrontController->getControllerToPath();
-            $this->file = APP_PATH.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.$controller_path.DIRECTORY_SEPARATOR.$view_file.'.'.$this->getViewSuffix();
+            $this->file = $controller_path.DIRECTORY_SEPARATOR.$view_file.'.'.$this->getViewSuffix();
         }
-        if (!is_file($this->file) || !is_readable($this->file)) {
-            header('HTTP/1.1 404 Not Found');
-            render('error404');
-            exit('Unreadable template: #'.$this->file);
+                
+        // Load Templating Engine
+        if ($filename) {
+            return $this->getTemplatingEngine()->render($filename, $this->data);
         }
-        // extract($this->data, EXTR_SKIP | EXTR_REFS);
-        foreach ($this->data as $key => $value) {
-            $$key = $value;
-        }
-        ob_start();
-        ob_implicit_flush(false);
-        try {
-            include realpath($this->file);
-
-            return ob_get_clean();
-        } catch (Exception $e) {
-            ob_end_clean();
-            print_r($e);
-        }
-
-        return ob_get_clean();
+        
+        return $this->getTemplatingEngine()->render($this->file, $this->data);
+        
     }
 
     /**
@@ -363,12 +365,7 @@ class Template
             $this->layoutFile = LAYOUT_PATH.DS.$this->getLayout().'.'.$this->getLayoutSuffix();
         }
         $this->content_for_layout = $this->render();
-        extract($this->data, EXTR_SKIP | EXTR_REFS);
-        if (!is_readable($this->layoutFile)) {
-            header('HTTP/1.1 404 Not Found');
-            render('error.phtml');
-            exit('Unreadable layoutFile: #'.$this->layoutFile);
-        }
+        extract($this->data, EXTR_SKIP | EXTR_REFS);        
         try {
             include $this->layoutFile;
         } catch (Exception $e) {

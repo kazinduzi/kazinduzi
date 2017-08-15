@@ -102,6 +102,7 @@ ini_set('unserialize_callback_func', 'spl_autoload_call');
 require __DIR__.'/Autoload/src/Autoloader.php';
 $autoloader = new \Kazinduzi\Autoload\Autoloader();
 $autoloader->addPrefix('Kazinduzi\\Core', 'framework/Core');
+$autoloader->addPrefix('Kazinduzi\\Templating', 'framework/Templating/src');
 $autoloader->addPrefix('Kazinduzi\\Db', 'framework/Db');
 $autoloader->addPrefix('Kazinduzi\\Session', 'framework/Session/src');
 $autoloader->addPrefix('Kazinduzi\\Cache', 'framework/Cache');

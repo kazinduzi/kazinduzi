@@ -17,9 +17,11 @@ defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
 use Inflector;
 use Kazinduzi\Core\Kazinduzi;
 use Kazinduzi\IoC\Container;
+use Kazinduzi\Core\Request;
+use Kazinduzi\Core\Response;
 
-class FrontController
-{
+class FrontController {
+
     private $container;
     private $controller;
     private $file;
@@ -39,8 +41,7 @@ class FrontController
      *
      * @return \FrontController
      */
-    public function setDIContainer(Container $container)
-    {
+    public function setDIContainer(Container $container) {
         $this->container = $container;
 
         return $this;
@@ -51,17 +52,14 @@ class FrontController
      *
      * @return Container
      */
-    public function getDIContainer()
-    {
+    public function getDIContainer() {
         return $this->container;
     }
 
-    public static function getInstance(array $options = [])
-    {
+    public static function getInstance(array $options = []) {
         if (empty(self::$instance)) {
-            return self::$instance = new self(Request::getInstance(), Response::getInstance(), $options);
+            return self::$instance = new static(Request::getInstance(), Response::getInstance(), $options);
         }
-
         return self::$instance;
     }
 
@@ -69,8 +67,7 @@ class FrontController
      * @param Request  $Request
      * @param Response $Response
      */
-    public function __construct(Request $Request, Response $Response, array $options = [])
-    {
+    public function __construct(Request $Request, Response $Response, array $options = []) {
         $this->Request = $Request;
         $this->Response = $Response;
         $this->configs = Kazinduzi::getConfig()->toArray();
@@ -95,14 +92,13 @@ class FrontController
      *
      * @return string
      */
-    private function parseRequestUri()
-    {
+    private function parseRequestUri() {
         $serverParams = $this->Request->serverParams();
 
         if (!isset($serverParams['REQUEST_URI'], $serverParams['SCRIPT_NAME'])) {
             return '';
         }
-        $requestUriSegments = parse_url('http://dummy'.$serverParams['REQUEST_URI']);
+        $requestUriSegments = parse_url('http://dummy' . $serverParams['REQUEST_URI']);
 
         $query = isset($requestUriSegments['query']) ? $requestUriSegments['query'] : '';
         $uri = isset($requestUriSegments['path']) ? $requestUriSegments['path'] : '';
@@ -137,8 +133,7 @@ class FrontController
      *
      * @return type
      */
-    private function sanitizeRelativeDirectory($uri)
-    {
+    private function sanitizeRelativeDirectory($uri) {
         $tok = strtok($uri, '/');
         $uri = [];
         while ($tok !== false) {
@@ -154,8 +149,7 @@ class FrontController
     /**
      * @return null
      */
-    private function checkRequestRoute()
-    {
+    private function checkRequestRoute() {
         if (Kazinduzi::$is_cli) {
             $protocol = 'cli';
             $options = Cli::options('route', 'method', 'get', 'post', 'referrer');
@@ -176,9 +170,9 @@ class FrontController
             }
         }
 
-    /*
-     * Extract the uri_path in the $_SERVER['REQUEST_URI'] from the requested URL
-     */
+        /*
+         * Extract the uri_path in the $_SERVER['REQUEST_URI'] from the requested URL
+         */
         $route = $this->parseRequestUri();
 
         if (isset($route)) {
@@ -192,21 +186,21 @@ class FrontController
             return;
         }
 
-    /*
-     * From the requested route, we fetch the most outer controller which match the requested action.
-     * This will prevent the earlier matched controller met when walking through the route.
-     * Example: {/path/to/router}, with this requested route.
-     *
-     * If the controller PathToController does exists,
-     * then the requested action outer will not be reached.
-     * Thus, to surrender this, we MUST match the PathToOuterController most controller, if not we pop off the last part of the route
-     * and we keep it for the action & arguments
-     */
-    $routeArgs = [];
+        /*
+         * From the requested route, we fetch the most outer controller which match the requested action.
+         * This will prevent the earlier matched controller met when walking through the route.
+         * Example: {/path/to/router}, with this requested route.
+         *
+         * If the controller PathToController does exists,
+         * then the requested action outer will not be reached.
+         * Thus, to surrender this, we MUST match the PathToOuterController most controller, if not we pop off the last part of the route
+         * and we keep it for the action & arguments
+         */
+        $routeArgs = [];
         do {
             $controller_path = implode('/', $routeParts);
-            if (is_file(APP_PATH.DIRECTORY_SEPARATOR.'controllers'.DIRECTORY_SEPARATOR.str_replace('../', '', $controller_path).'Controller.php')) {
-                $this->file = APP_PATH.DIRECTORY_SEPARATOR.'controller'.DIRECTORY_SEPARATOR.str_replace('../', '', $controller_path).'Controller.php';
+            if (is_file(APP_PATH . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . str_replace('../', '', $controller_path) . 'Controller.php')) {
+                $this->file = APP_PATH . DIRECTORY_SEPARATOR . 'controller' . DIRECTORY_SEPARATOR . str_replace('../', '', $controller_path) . 'Controller.php';
                 $this->controller = Inflector::camelize($controller_path);
                 break;
             }
@@ -233,28 +227,27 @@ class FrontController
     /**
      * @return \class|null
      */
-    public function loadController()
-    {
+    public function loadController() {
         $controller = $this->getController();
         if (empty($controller)) {
             header('HTTP/1.1 404 Not Found', 404);
             $error_data = [
-        'status' => 404,
-        'title'  => _('Unknown controller!'),
-        'body'   => _('No controller is available'),
-        ];
+                'status' => 404,
+                'title' => _('Unknown controller!'),
+                'body' => _('No controller is available'),
+            ];
             render('error404.phtml', $error_data);
             exit(1);
         }
-        $class = ucfirst($controller.'Controller');
-        $this->CallableController = new $class($this->Request, $this->Response);
+        $class = ucfirst($controller . 'Controller');
+        $this->CallableController = new $class($this->Request, $this->Response, $this->getDIContainer());
         $this->CallableController->setController($controller);
         if (!is_callable([$this->CallableController, $this->getAction()])) {
             $error_data = [
-        'status' => 404,
-        'title'  => _('Unknown action called!'),
-        'body'   => _('Method <b>'.$this->getAction().'</b> is not defined in the controller <b>'.$class.'</b>'),
-        ];
+                'status' => 404,
+                'title' => _('Unknown action called!'),
+                'body' => _('Method <b>' . $this->getAction() . '</b> is not defined in the controller <b>' . $class . '</b>'),
+            ];
             header('HTTP/1.1 404 Not Found');
             render('error404.phtml', $error_data);
             exit(1);
@@ -269,10 +262,7 @@ class FrontController
     /**
      * @return type
      */
-    public function getCallableController()
-    {
-        $this->CallableController->setDIContainer($this->getDIContainer());
-
+    public function getCallableController() {
         return $this->CallableController;
     }
 
@@ -283,8 +273,7 @@ class FrontController
      *
      * @return \FrontController
      */
-    public function setController($controller)
-    {
+    public function setController($controller) {
         $this->controller = $controller;
 
         return $this;
@@ -293,16 +282,14 @@ class FrontController
     /**
      * @return type
      */
-    public function getController()
-    {
+    public function getController() {
         return $this->controller;
     }
 
     /**
      * @return type
      */
-    public function getControllerToPath()
-    {
+    public function getControllerToPath() {
         return Inflector::pathize($this->controller);
     }
 
@@ -313,10 +300,8 @@ class FrontController
      *
      * @return \FrontController
      */
-    public function setAction($action)
-    {
+    public function setAction($action) {
         $this->action = $action;
-
         return $this;
     }
 
@@ -327,8 +312,7 @@ class FrontController
      *
      * @return string
      */
-    public function getAction()
-    {
+    public function getAction() {
         $action = str_replace(['.', '-', '_'], ' ', $this->action);
         $action = ucwords($action);
         $action = str_replace(' ', '', $action);
@@ -344,8 +328,7 @@ class FrontController
      *
      * @return \FrontController
      */
-    public function setArgs($args)
-    {
+    public function setArgs($args) {
         $this->args = $args;
 
         return $this;
@@ -354,28 +337,26 @@ class FrontController
     /**
      * @return type
      */
-    public function getArgs()
-    {
+    public function getArgs() {
         return $this->args;
     }
 
     /**
      * @return type
      */
-    public function getRequest()
-    {
+    public function getRequest() {
         return $this->Request;
     }
 
     /**
      * @return type
      */
-    public function getResponse()
-    {
+    public function getResponse() {
         return $this->Response;
     }
+
 }
 
-final class NotFoundException extends \Exception
-{
+final class NotFoundException extends \Exception {
+    
 }
