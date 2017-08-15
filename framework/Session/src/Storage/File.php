@@ -2,7 +2,6 @@
 
 namespace Kazinduzi\Session\Storage;
 
-defined('KAZINDUZI_PATH') or die('No direct access script allowed');
 /*
  * Kazinduzi Framework (http://framework.kazinduzi.com/)
  *
@@ -81,15 +80,22 @@ final class File extends Session
     }
 
     /**
-     * @param type $id
-     *
-     * @return type
+     * Read session data
+     * 
+     * @param string $id
+     * @return string
      */
     public function readSession($id)
     {
-        $session_filename = self::$savePath.DIRECTORY_SEPARATOR . $id.'.session';
-
-        return is_file($session_filename) ? unserialize(file_get_contents($session_filename)) : [];
+        $session_filename = self::$savePath . DIRECTORY_SEPARATOR . $id.'.session';
+        
+        // read MUST create file. Otherwise, strict mode will not work
+        touch($session_filename);
+        
+        // MUST return STRING for successful read().
+        // Return FALSE only when there is error. i.e. Do not return FALSE
+        // for non-existing session data for the $id.        
+        return (string) unserialize(file_get_contents($session_filename));        
     }
 
     /**
@@ -119,7 +125,7 @@ final class File extends Session
      */
     public function destroySession($id)
     {
-        $sess_file = self::$savePath.DIRECTORY_SEPARATOR.$id.'.session';
+        $sess_file = self::$savePath . DIRECTORY_SEPARATOR . $id . '.session';
         if (is_file($sess_file)) {
             unlink($sess_file);
         }
@@ -134,7 +140,7 @@ final class File extends Session
      */
     public function gcSession($maxlifetime)
     {
-        foreach (glob(self::$savePath.DS.'*.session') as $sess_file) {
+        foreach (glob(self::$savePath. DIRECTORY_SEPARATOR . '*.session') as $sess_file) {
             if (filemtime($sess_file) + $maxlifetime < time() && is_file($sess_file)) {
                 unlink($sess_file);
             }

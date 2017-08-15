@@ -2,8 +2,6 @@
 
 namespace Kazinduzi\Session;
 
-defined('KAZINDUZI_PATH') || die('No direct access script allowed');
-
 /*
  * Session provides session-level data management and the related configurations.
  *
@@ -54,8 +52,8 @@ use IteratorAggregate;
 use Kazinduzi\Core\Kazinduzi;
 use Kazinduzi\Core\Request;
 
-abstract class Session implements IteratorAggregate, Countable
-{
+abstract class Session implements IteratorAggregate, Countable {
+
     /**
      * @var array
      */
@@ -98,8 +96,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return session object
      */
-    public static function instance($type = null)
-    {
+    public static function instance($type = null) {
         $type = $type ?: Kazinduzi::getConfig('session')->get('type');
 
         if (isset(self::$instances[$type])) {
@@ -143,8 +140,8 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @throws \Exception
      */
-    private function __construct()
-    {
+    private function __construct() {
+        
     }
 
     /**
@@ -158,49 +155,47 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @uses    Encrypt::encode
      */
-    public function __toString()
-    {
+    public function __toString() {
         // Obfuscate the data with base64 encoding
-    return base64_encode(serialize($this->_data));
+        return base64_encode(serialize($this->_data));
     }
 
     /**
      * initializing the session.
      */
-    private function init()
-    {
+    private function init() {
         // Need to destroy any existing sessions started with session.auto_start
-    if (session_id()) {
-        session_unset();
-        session_destroy();
-    }
-    // Set the name of the session which is used as cookie name.
-    ini_set('session.name', (string) self::$configs['session_name']);
+        if (session_id()) {
+            session_unset();
+            session_destroy();
+        }
+        // Set the name of the session which is used as cookie name.
+        ini_set('session.name', (string) self::$configs['session_name']);
 
-    // Set session lifetime of the cookie in seconds
-    ini_set('session.cookie_lifetime', (int) self::$configs['session_lifetime']);
+        // Set session lifetime of the cookie in seconds
+        ini_set('session.cookie_lifetime', (int) self::$configs['session_lifetime']);
 
-    // Set Session property to use cookies ONLY
-    if (!ini_get('session.use_only_cookies')) {
-        ini_set('session.use_only_cookies', '1');
-    }
-    // Use session cookies, not transparent sessions that puts the session id in the query string.
-    ini_set('session.use_trans_sid', '0');
+        // Set Session property to use cookies ONLY
+        if (!ini_get('session.use_only_cookies')) {
+            ini_set('session.use_only_cookies', '1');
+        }
+        // Use session cookies, not transparent sessions that puts the session id in the query string.
+        ini_set('session.use_trans_sid', '0');
 
-    // Don't send HTTP headers using PHP's session handler.
-    ini_set('session.cache_limiter', 'none');
+        // Don't send HTTP headers using PHP's session handler.
+        ini_set('session.cache_limiter', 'none');
 
-    // Use httponly session cookies.
-    ini_set('session.cookie_httponly', '1');
+        // Use httponly session cookies.
+        ini_set('session.cookie_httponly', '1');
 
-        ini_set('session.hash_bits_per_character', 5);
+        ini_set('session.sid_bits_per_character', 5);
 
-    // Use a strong session hash identifier
-    if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
-        ini_set('session.hash_function', isset(self::$configs['hash_function']) ? self::$configs['hash_function'] : '1');
-    } else {
-        ini_set('session.hash_function', '1');
-    }
+        // Use a strong session hash identifier
+        if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
+            ini_set('session.hash_function', isset(self::$configs['hash_function']) ? self::$configs['hash_function'] : '1');
+        } else {
+            ini_set('session.hash_function', '1');
+        }
     }
 
     /**
@@ -213,8 +208,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return bool whether to use custom storage.
      */
-    public function getUseCustomStorage()
-    {
+    public function getUseCustomStorage() {
         return false;
     }
 
@@ -223,18 +217,17 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return bool
      */
-    private function open()
-    {
+    private function open() {
         $this->getCookieParams();
         if ($this->getUseCustomStorage()) {
             session_set_save_handler(
-                [&$this, 'openSession'],
-                [&$this, 'closeSession'],
-                [&$this, 'readSession'],
-                [&$this, 'writeSession'],
-                [&$this, 'destroySession'],
-                [&$this, 'gcSession']
-        );
+                    [$this, 'openSession'], 
+                    [$this, 'closeSession'], 
+                    [$this, 'readSession'], 
+                    [$this, 'writeSession'], 
+                    [$this, 'destroySession'], 
+                    [$this, 'gcSession']
+            );
         }
         if (false === $this->isStarted()) {
             session_start();
@@ -256,8 +249,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return bool
      */
-    public function start()
-    {
+    public function start() {
         if ($this->isStarted()) {
             return true;
         }
@@ -277,8 +269,7 @@ abstract class Session implements IteratorAggregate, Countable
     /**
      * @return bool
      */
-    protected function checkUseragentOrIP()
-    {
+    protected function checkUseragentOrIP() {
         if (self::$configs['session_match_useragent'] && ($this->ua != $_SESSION['ua'])) {
             $this->destroy();
             throw new \Exception('The UserAgent doesn\'t match.');
@@ -294,8 +285,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return bool
      */
-    public function restart()
-    {
+    public function restart() {
         session_start();
         $this->_data = &$_SESSION;
 
@@ -307,8 +297,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return string
      */
-    public function regenerate($delete_old_session = true)
-    {
+    public function regenerate($delete_old_session = true) {
         session_regenerate_id($delete_old_session);
 
         return session_id();
@@ -317,8 +306,7 @@ abstract class Session implements IteratorAggregate, Countable
     /**
      * Ends the current session and store session data.
      */
-    public function close()
-    {
+    public function close() {
         if ('' !== session_id()) {
             session_write_close();
         }
@@ -334,8 +322,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return bool
      */
-    public function destroy($httponly = 1)
-    {
+    public function destroy($httponly = 1) {
         if ('' !== session_id()) {
             $this->_data = [];
             session_unset();
@@ -357,8 +344,7 @@ abstract class Session implements IteratorAggregate, Countable
     /**
      * @return bool whether the session has started
      */
-    public function isStarted()
-    {
+    public function isStarted() {
         if (php_sapi_name() !== 'cli') {
             if (version_compare(phpversion(), '5.4.0', '>=')) {
                 return session_status() === PHP_SESSION_ACTIVE;
@@ -373,8 +359,7 @@ abstract class Session implements IteratorAggregate, Countable
     /**
      * @return string the current session ID
      */
-    public function id()
-    {
+    public function id() {
         return session_id();
     }
 
@@ -383,16 +368,14 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return string
      */
-    public function getId()
-    {
+    public function getId() {
         return session_id();
     }
 
     /**
      * @param string $value the session ID for the current session
      */
-    public function setId($value)
-    {
+    public function setId($value) {
         session_id($value);
 
         return $this;
@@ -401,16 +384,14 @@ abstract class Session implements IteratorAggregate, Countable
     /**
      * @return string the current session name
      */
-    public function getSessionName()
-    {
+    public function getSessionName() {
         return session_name();
     }
 
     /**
      * @param string $value the session name for the current session, must be an alphanumeric string, defaults to PHPSESSID
      */
-    public function setSessionName($value)
-    {
+    public function setSessionName($value) {
         session_name($value);
     }
 
@@ -421,16 +402,14 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return string
      */
-    public function name($name = null)
-    {
+    public function name($name = null) {
         return session_name($name);
     }
 
     /**
      * @return string the current session save path, defaults to '/tmp'.
      */
-    public function getSavePath()
-    {
+    public function getSavePath() {
         return session_save_path();
     }
 
@@ -439,12 +418,11 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @throws CException if the path is not a valid directory
      */
-    public function setSavePath($value)
-    {
+    public function setSavePath($value) {
         if (is_dir($value)) {
             session_save_path($value);
         } else {
-            throw new \Exception('session.savePath [<strong>'.$value.'</strong>] is not a valid directory.');
+            throw new \Exception('session.savePath [<strong>' . $value . '</strong>] is not a valid directory.');
         }
     }
 
@@ -453,8 +431,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @see http://us2.php.net/manual/en/function.session-get-cookie-params.php
      */
-    public function getCookieParams()
-    {
+    public function getCookieParams() {
         return session_get_cookie_params();
     }
 
@@ -467,8 +444,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @see http://us2.php.net/manual/en/function.session-set-cookie-params.php
      */
-    public function setCookieParams(array $value)
-    {
+    public function setCookieParams(array $value) {
         $params = session_get_cookie_params();
         extract($params);
         extract($value);
@@ -482,8 +458,7 @@ abstract class Session implements IteratorAggregate, Countable
     /**
      * @return string how to use cookie to store session ID. Defaults to 'Allow'.
      */
-    public function getCookieMode()
-    {
+    public function getCookieMode() {
         if (ini_get('session.use_cookies') === '0') {
             return 'none';
         } elseif (ini_get('session.use_only_cookies') === '0') {
@@ -496,8 +471,7 @@ abstract class Session implements IteratorAggregate, Countable
     /**
      * @param string $value how to use cookie to store session ID. Valid values include 'none', 'allow' and 'only'.
      */
-    public function setCookieMode($value)
-    {
+    public function setCookieMode($value) {
         if ($value === 'none') {
             ini_set('session.use_cookies', '0');
         } elseif ($value === 'allow') {
@@ -514,8 +488,7 @@ abstract class Session implements IteratorAggregate, Countable
     /**
      * @return int the probability (percentage) that the gc (garbage collection) process is started on every session initialization, defaults to 1 meaning 1% chance.
      */
-    public function getGCProbability()
-    {
+    public function getGCProbability() {
         return (int) ini_get('session.gc_probability');
     }
 
@@ -524,8 +497,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @throws CException if the value is beyond [0,100]
      */
-    public function setGCProbability($value)
-    {
+    public function setGCProbability($value) {
         $value = (int) $value;
         if ($value >= 0 && $value <= 100) {
             ini_set('session.gc_probability', $value);
@@ -538,32 +510,28 @@ abstract class Session implements IteratorAggregate, Countable
     /**
      * @return bool whether transparent sid support is enabled or not, defaults to false.
      */
-    public function getUseTransparentSession()
-    {
+    public function getUseTransparentSession() {
         return ini_get('session.use_trans_sid') == 1;
     }
 
     /**
      * @param bool $value whether transparent sid support is enabled or not.
      */
-    public function setUseTransparentSession($value)
-    {
+    public function setUseTransparentSession($value) {
         ini_set('session.use_trans_sid', $value ? '1' : '0');
     }
 
     /**
      * @return int the number of seconds after which data will be seen as 'garbage' and cleaned up, defaults to 1440 seconds.
      */
-    public function getTimeout()
-    {
+    public function getTimeout() {
         return (int) ini_get('session.gc_maxlifetime');
     }
 
     /**
      * @param int $value the number of seconds after which data will be seen as 'garbage' and cleaned up
      */
-    public function setTimeout($value)
-    {
+    public function setTimeout($value) {
         ini_set('session.gc_maxlifetime', $value);
     }
 
@@ -577,8 +545,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return bool whether session is opened successfully
      */
-    public function openSession($savePath, $sessionName)
-    {
+    public function openSession($savePath, $sessionName) {
         return true;
     }
 
@@ -589,8 +556,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return bool whether session is closed successfully
      */
-    public function closeSession()
-    {
+    public function closeSession() {
         return true;
     }
 
@@ -603,8 +569,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return string the session data
      */
-    public function readSession($id)
-    {
+    public function readSession($id) {
         return '';
     }
 
@@ -618,8 +583,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return bool whether session write is successful
      */
-    public function writeSession($id, $data)
-    {
+    public function writeSession($id, $data) {
         return true;
     }
 
@@ -632,8 +596,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return bool whether session is destroyed successfully
      */
-    public function destroySession($id)
-    {
+    public function destroySession($id) {
         return true;
     }
 
@@ -646,8 +609,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return bool whether session is GCed successfully
      */
-    public function gcSession($maxLifetime)
-    {
+    public function gcSession($maxLifetime) {
         return true;
     }
 
@@ -659,8 +621,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return SessionIterator an iterator for traversing the session variables.
      */
-    public function getIterator()
-    {
+    public function getIterator() {
         return new SessionIterator($this->_data);
     }
 
@@ -669,8 +630,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return int the number of session variables
      */
-    public function getCount()
-    {
+    public function getCount() {
         return count($this->_data);
     }
 
@@ -680,16 +640,14 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return int number of items in the session.
      */
-    public function count()
-    {
+    public function count() {
         return $this->getCount();
     }
 
     /**
      * @return array the list of session variable names
      */
-    public function getKeys()
-    {
+    public function getKeys() {
         return array_keys($this->_data);
     }
 
@@ -701,8 +659,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return Session
      */
-    public function set($key, $value)
-    {
+    public function set($key, $value) {
         if ($this->id() === '') {
             throw new \Exception('The session is not started yet');
         }
@@ -720,8 +677,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return $this
      */
-    public function __set($key, $value)
-    {
+    public function __set($key, $value) {
         return $this->set($key, $value);
     }
 
@@ -737,8 +693,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @since 1.1.2
      */
-    public function &get($key, $defaultValue = null)
-    {
+    public function &get($key, $defaultValue = null) {
         if ('' === $this->id()) {
             throw new Exception('The session is not started yet');
         }
@@ -757,8 +712,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return mixed
      */
-    public function &__get($key)
-    {
+    public function &__get($key) {
         return $this->get($key, null);
     }
 
@@ -769,8 +723,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return bool
      */
-    public function __isset($key)
-    {
+    public function __isset($key) {
         if ('' === $this->id()) {
             throw new \Exception('The session is not started yet');
         }
@@ -788,8 +741,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return true
      */
-    public function __unset($key)
-    {
+    public function __unset($key) {
         if ('' === $this->id()) {
             throw new \Exception('The session is not started yet');
         }
@@ -807,8 +759,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return mixed the session variable value, null if no such variable exists
      */
-    public function itemAt($key)
-    {
+    public function itemAt($key) {
         if ('' === $this->id()) {
             throw new \Exception('The session is not started yet');
         }
@@ -826,8 +777,7 @@ abstract class Session implements IteratorAggregate, Countable
      * @param mixed $key   session variable name
      * @param mixed $value session variable value
      */
-    public function add($key, $value)
-    {
+    public function add($key, $value) {
         if ('' === $this->id()) {
             throw new \Exception('The session is not started yet');
         }
@@ -846,8 +796,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return mixed the removed value, null if no such session variable.
      */
-    public function remove($key)
-    {
+    public function remove($key) {
         if ('' === $this->id()) {
             throw new \Exception('The session is not started yet');
         }
@@ -865,8 +814,7 @@ abstract class Session implements IteratorAggregate, Countable
     /**
      * Removes all session variables.
      */
-    public function clear()
-    {
+    public function clear() {
         if ($this->id() === '') {
             throw new \Exception('The session is not started yet');
         }
@@ -880,8 +828,7 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return bool whether there is the named session variable
      */
-    public function contains($key)
-    {
+    public function contains($key) {
         if ($this->id() === '') {
             throw new \Exception('The session is not started yet');
         }
@@ -902,12 +849,12 @@ abstract class Session implements IteratorAggregate, Countable
      *
      * @return array the list of all session variables in array
      */
-    public function &toArray()
-    {
+    public function &toArray() {
         if ($this->id() === '') {
             throw new \Exception('The session is not started yet');
         }
 
         return $this->_data;
     }
+
 }

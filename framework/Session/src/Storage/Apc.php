@@ -2,7 +2,6 @@
 
 namespace Kazinduzi\Session\Storage;
 
-defined('KAZINDUZI_PATH') or die('No direct access script allowed');
 /*
  * Kazinduzi Framework (http://framework.kazinduzi.com/)
  *

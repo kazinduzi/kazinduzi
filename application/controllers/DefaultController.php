@@ -32,6 +32,7 @@ class DefaultController extends Controller
     {
         $this->title = __('messages.welcome');
         $this->content = 'Welcome to Kazinduzi framework v' . Kazinduzi::version();
+        var_dump($_SESSION);
     }
 
     public function test()

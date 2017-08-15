@@ -2,7 +2,6 @@
 
 namespace Kazinduzi\Session\Storage;
 
-defined('KAZINDUZI_PATH') or die('No direct access script allowed');
 /*
  * Kazinduzi Framework (http://framework.kazinduzi.com/)
  *
@@ -18,6 +17,7 @@ defined('KAZINDUZI_PATH') or die('No direct access script allowed');
  * @author Emmanuel_Leonie
  */
 
+use Kazinduzi\Core\Kazinduzi;
 use Kazinduzi\Core\Request;
 use Kazinduzi\Session\Session;
 
@@ -127,9 +127,9 @@ final class Database extends Session
             $this->createSessionTable($this->getDbo(), $this->sessionTableName);
         }
         $sql = sprintf('DELETE FROM `%s` WHERE `expire` < %s', $this->sessionTableName, time());
-        $this->getDbo()->setQuery($sql);
+        $this->getDbo()->setQuery($sql)->execute();
 
-        return (bool) $this->getDbo()->execute();
+        return true;
     }
 
     /**
@@ -146,14 +146,13 @@ final class Database extends Session
         $sql = sprintf("SELECT * FROM `{$this->sessionTableName}` WHERE `expire` > '%d' AND `id` = '%s'", time(), $id);
         $this->getDbo()->setQuery($sql);
         $data = $this->getDbo()->fetchAssocRow();
-        if (empty($data)) {
-            return [];
+        if (!empty($data)) {            
+            $this->oldSessionId = $data['id'];
+            $this->ua = $data['user_agent'];
+            $this->ip = $data['ip_address'];
+            return $data['data'];
         }
-        $this->oldSessionId = $data['id'];
-        $this->ua = $data['user_agent'];
-        $this->ip = $data['ip_address'];
-
-        return $data['data'];
+        return null;
     }
 
     /**
