@@ -2,9 +2,6 @@
 
 namespace Kazinduzi\Core;
 
-use getallheaders;
-
-
 defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
 
 /**
