@@ -17,29 +17,24 @@ use Kazinduzi\Core\Response;
 
 class DefaultController extends Controller
 {
-    /**
-     * Constructor for loginController.
-     */
-    public function __construct(Request $req, Response $res, $container)
-    {
-        parent::__construct($req, $res, $container);
-        $this->setLayout('default/default');
-        $this->Template->setViewSuffix('phtml');
-    }
     
-    // We check if they are logged in, generally this would be done in the constructor, but we want to allow customers to log out still
-    // or still be able to either retrieve their password or anything else this controller may be extended to do
-    // if they are logged in, we send them back to the dashboard by default, if they are not logging in
+    /**
+     * 
+     * @return type
+     */
     public function index()
-    {
-        
-        $this->setLayout('default/default');
+    {       
+        //$templating = $this->getDIContainer()->get('templating');
+        $this->setLayout('default/default');        
         $this->title = __('messages.welcome');
-        $this->content = 'Welcome to Kazinduzi framework v' . Kazinduzi::version();
-        //$this->Template->setFilename('default/index');        
-        return $this->Template->render('default/index.phtml');
+        $this->content = 'Welcome to Kazinduzi framework v' . Kazinduzi::version();        
+        $content = $this->render('default/index.phtml');
+        return new Response($content);        
     }
 
+    /**
+     * 
+     */
     public function test()
     {
         $data = ['token' => bin2hex(openssl_random_pseudo_bytes(16))];

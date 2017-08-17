@@ -64,8 +64,7 @@ class TwigEngine implements TemplatingEngine
      */
     public function render($template, array $data = []) 
     {
-        $html = $this->engine->render($template, $data);
-        return $html;
+        return $this->engine->render($template, $data);        
     }
 
 }

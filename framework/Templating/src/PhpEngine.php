@@ -52,8 +52,6 @@ class PhpEngine implements TemplatingEngine
             ob_end_clean();
             print_r($e);
         }
-
-        return ob_get_clean();
         
     }
     

@@ -14,54 +14,54 @@ namespace Kazinduzi\Core;
  */
 class Response
 {
-    public static $statuses =
-        [
-            100 => 'Continue',
-            101 => 'Switching Protocols',
-            200 => 'OK',
-            201 => 'Created',
-            202 => 'Accepted',
-            203 => 'Non-Authoritative Information',
-            204 => 'No Content',
-            205 => 'Reset Content',
-            206 => 'Partial Content',
-            207 => 'Multi-Status',
-            300 => 'Multiple Choices',
-            301 => 'Moved Permanently',
-            302 => 'Found',
-            303 => 'See Other',
-            304 => 'Not Modified',
-            305 => 'Use Proxy',
-            307 => 'Temporary Redirect',
-            400 => 'Bad Request',
-            401 => 'Unauthorized',
-            402 => 'Payment Required',
-            403 => 'Forbidden',
-            404 => 'Not Found',
-            405 => 'Method Not Allowed',
-            406 => 'Not Acceptable',
-            407 => 'Proxy Authentication Required',
-            408 => 'Request Timeout',
-            409 => 'Conflict',
-            410 => 'Gone',
-            411 => 'Length Required',
-            412 => 'Precondition Failed',
-            413 => 'Request Entity Too Large',
-            414 => 'Request-URI Too Long',
-            415 => 'Unsupported Media Type',
-            416 => 'Requested Range Not Satisfiable',
-            417 => 'Expectation Failed',
-            422 => 'Unprocessable Entity',
-            423 => 'Locked',
-            424 => 'Failed Dependency',
-            500 => 'Internal Server Error',
-            501 => 'Not Implemented',
-            502 => 'Bad Gateway',
-            503 => 'Service Unavailable',
-            504 => 'Gateway Timeout',
-            505 => 'HTTP Version Not Supported',
-            507 => 'Insufficient Storage',
-            509 => 'Bandwidth Limit Exceeded',
+
+    public static $statuses = [
+        100 => 'Continue',
+        101 => 'Switching Protocols',
+        200 => 'OK',
+        201 => 'Created',
+        202 => 'Accepted',
+        203 => 'Non-Authoritative Information',
+        204 => 'No Content',
+        205 => 'Reset Content',
+        206 => 'Partial Content',
+        207 => 'Multi-Status',
+        300 => 'Multiple Choices',
+        301 => 'Moved Permanently',
+        302 => 'Found',
+        303 => 'See Other',
+        304 => 'Not Modified',
+        305 => 'Use Proxy',
+        307 => 'Temporary Redirect',
+        400 => 'Bad Request',
+        401 => 'Unauthorized',
+        402 => 'Payment Required',
+        403 => 'Forbidden',
+        404 => 'Not Found',
+        405 => 'Method Not Allowed',
+        406 => 'Not Acceptable',
+        407 => 'Proxy Authentication Required',
+        408 => 'Request Timeout',
+        409 => 'Conflict',
+        410 => 'Gone',
+        411 => 'Length Required',
+        412 => 'Precondition Failed',
+        413 => 'Request Entity Too Large',
+        414 => 'Request-URI Too Long',
+        415 => 'Unsupported Media Type',
+        416 => 'Requested Range Not Satisfiable',
+        417 => 'Expectation Failed',
+        422 => 'Unprocessable Entity',
+        423 => 'Locked',
+        424 => 'Failed Dependency',
+        500 => 'Internal Server Error',
+        501 => 'Not Implemented',
+        502 => 'Bad Gateway',
+        503 => 'Service Unavailable',
+        504 => 'Gateway Timeout',
+        505 => 'HTTP Version Not Supported',
+        507 => 'Insufficient Storage',
+        509 => 'Bandwidth Limit Exceeded',
     ];
     private static $instance;
     protected $status = 200;
@@ -69,22 +69,21 @@ class Response
     protected $cgi;
     protected $headers = [];
     protected $output = null;
-    protected $mime_types =
-        [
-            'text/html'                => 'html',
-            'application/xhtml+xml'    => 'html',
-            'application/xml'          => 'xml',
-            'text/xml'                 => 'xml',
-            'text/javascript'          => 'js',
-            'application/javascript'   => 'js',
-            'application/x-javascript' => 'js',
-            'application/json'         => 'json',
-            'text/x-json'              => 'json',
-            'application/rss+xml'      => 'rss',
-            'application/atom+xml'     => 'atom',
-            '*/*'                      => 'html',
-            'default'                  => 'html',
-        ];
+    protected $mime_types = [
+        'text/html' => 'html',
+        'application/xhtml+xml' => 'html',
+        'application/xml' => 'xml',
+        'text/xml' => 'xml',
+        'text/javascript' => 'js',
+        'application/javascript' => 'js',
+        'application/x-javascript' => 'js',
+        'application/json' => 'json',
+        'text/x-json' => 'json',
+        'application/rss+xml' => 'rss',
+        'application/atom+xml' => 'atom',
+        '*/*' => 'html',
+        'default' => 'html',
+    ];
 
     /**
      * @return type
@@ -215,7 +214,6 @@ class Response
     {
         if ($output) {
             $this->output = $output;
-
             return $this;
         }
 
@@ -230,12 +228,12 @@ class Response
      */
     public function sendHeaders()
     {
-        if (!headers_sent()) {
+        if (! headers_sent()) {
             if ($this->isCgi()) {
-                header('Status: '.$this->status.' '.static::$statuses[$this->status]);
+                header('Status: ' . $this->status . ' ' . static::$statuses[$this->status]);
             } else {
                 $protocol = $_SERVER['SERVER_PROTOCOL'] ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1';
-                header($protocol.' '.$this->status.' '.static::$statuses[$this->status]);
+                header($protocol . ' ' . $this->status . ' ' . static::$statuses[$this->status]);
             }
             foreach ($this->headers as $name => $value) {
                 if (is_int($name) and is_array($value)) {
@@ -264,4 +262,5 @@ class Response
             echo $this->output;
         }
     }
+
 }

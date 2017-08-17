@@ -332,12 +332,16 @@ class Template
      * @see render the template voor the specific
      * controller
      */
-    public function render($filename = null)
-    {
-        $view_file = $this->FrontController->getAction();
+    public function render($filename = null, array $data = [])
+    {        
+        $viewFile = $this->FrontController->getAction();
         if (! $this->file) {
             $controller_path = $this->FrontController->getControllerToPath();
-            $this->file = $controller_path.DIRECTORY_SEPARATOR.$view_file.'.'.$this->getViewSuffix();
+            $this->file = $controller_path.DIRECTORY_SEPARATOR.$viewFile.'.'.$this->getViewSuffix();
+        }
+        
+        if ($data) {
+            $this->data = $data;
         }
                 
         // Load Templating Engine
@@ -364,13 +368,20 @@ class Template
         } elseif (!is_file($this->layoutFile)) {
             $this->layoutFile = LAYOUT_PATH.DS.$this->getLayout().'.'.$this->getLayoutSuffix();
         }
+        
         $this->content_for_layout = $this->render();
         extract($this->data, EXTR_SKIP | EXTR_REFS);        
+        
+        ob_start();
+        ob_implicit_flush(false);
         try {
             include $this->layoutFile;
+            return ob_get_clean();
         } catch (Exception $e) {
-            throw $e;
+            ob_end_clean();
+            print_r($e);
         }
+        
     }
 
     /**
@@ -410,21 +421,4 @@ class Template
             }
         }
     }
-}
-
-function sanitize_output($buffer)
-{
-    $search = [
-        '/\>[^\S ]+/s', //strip whitespaces after tags, except space
-        '/[^\S ]+\</s', //strip whitespaces before tags, except space
-        '/(\s)+/s',  // shorten multiple whitespace sequences
-    ];
-    $replace = [
-        '>',
-        '<',
-        '\\1',
-    ];
-    $buffer = preg_replace($search, $replace, $buffer);
-
-    return $buffer;
 }

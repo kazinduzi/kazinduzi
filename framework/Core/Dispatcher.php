@@ -39,9 +39,8 @@ class Dispatcher
     {
         $frontCortroller = FrontController::getInstance();
         $frontCortroller->setDIContainer($this->container);
-        $frontCortroller->loadController();
-        if ($frontCortroller->getCallableController() instanceof Controller) {
-            $frontCortroller->getCallableController()->run();
-        }
+        $frontCortroller->loadController();        
+        $response = $frontCortroller->getCallableController()->run();
+        $response->send(true);        
     }
 }

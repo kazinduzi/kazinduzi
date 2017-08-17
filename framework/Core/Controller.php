@@ -84,9 +84,9 @@ abstract class Controller {
      * @param Request  $Request
      * @param Response $Response
      */
-    protected function __construct(Request $Request = null, Response $Response = null, $container)
+    public function __construct(Request $Request = null, Response $Response = null, Container $container)
     {
-        $this->container = $container;
+        $this->setDIContainer($container);
         $this->Request = $Request instanceof Request ? $Request : Request::getInstance();
         $this->params = $this->Request->getParams();
         $this->Response = $Response instanceof Response ? $Response : Response::getInstance();
@@ -343,8 +343,9 @@ abstract class Controller {
     public function executeAction($action) {
         try {
             $this->before();
-            $this->{$action}($this->getArgs());
+            $this->Response = $this->{$action}($this->getArgs());
             $this->after();
+            return $this->Response;
         } catch (Exception $e) {
             throw $e;
         }
@@ -359,13 +360,20 @@ abstract class Controller {
      */
     public function run() {
         try {
-            $this->executeAction($this->getAction());
+            $response = $this->executeAction($this->getAction());
+            
             if ($this->isLayoutDisplayed()) {
-                $this->getTemplate()->setLayout($this->getLayout());
-                $this->getTemplate()->display();
-            } else {
-                $this->getTemplate()->render();
+                $response = $this->getTemplate()->display();
             }
+                        
+            if ($response instanceof Response) {
+                return $response;
+            }
+            
+            if (is_string($response)) {
+                return new Response($response);
+            }
+            
         } catch (Exception $e) {
             throw $e;
         }
@@ -456,32 +464,14 @@ abstract class Controller {
     }
 
     /**
-     * @param type $object
+     * Render a template
+     * 
+     * @param string $template
+     * @param array $data
+     * @return string
      */
-    public function inspect($object) {
-        $methods = get_class_methods($object);
-        $data = get_class_vars(get_class($object));
-        $odata = get_object_vars($object);
-        $parent = get_parent_class($object);
-        $output = 'Parent class: ' . $parent . "\n\n";
-        $output .= "Methods:\n";
-        $output .= "--------\n";
-        foreach ($methods as $method) {
-            $meth = new ReflectionMethod(get_class($object), $method);
-            $output .= $method . "\n";
-            $output .= $meth->__toString();
-        }
-        $output .= "\nClass data:\n";
-        $output .= "-----------\n";
-        foreach ($data as $name => $value) {
-            $output .= $name . ' = ' . print_r($value, 1) . "\n";
-        }
-        $output .= "\nObject data:\n";
-        $output .= "------------\n";
-        foreach ($odata as $name => $value) {
-            $output .= $name . ' = ' . print_r($value, 1) . "\n";
-        }
-        echo '<pre>', $output, '</pre>';
+    protected function render($template = null, array $data = []) {
+        return $this->Template->render($template, $data);
     }
 
 }

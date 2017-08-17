@@ -22,7 +22,7 @@ use Kazinduzi\Core\Response;
 
 class FrontController {
 
-    private $container;
+     protected $container;
     private $controller;
     private $file;
     private $action;
