@@ -15,7 +15,7 @@ namespace Kazinduzi\Core;
 class Response
 {
 
-    public static $statuses = [
+    public static $statuses = array(
         100 => 'Continue',
         101 => 'Switching Protocols',
         200 => 'OK',
@@ -61,15 +61,15 @@ class Response
         504 => 'Gateway Timeout',
         505 => 'HTTP Version Not Supported',
         507 => 'Insufficient Storage',
-        509 => 'Bandwidth Limit Exceeded',
-    ];
+        509 => 'Bandwidth Limit Exceeded'
+    );
     private static $instance;
     protected $status = 200;
     protected $status_text = 'OK';
     protected $cgi;
     protected $headers = [];
     protected $output = null;
-    protected $mime_types = [
+    protected $mime_types = array(
         'text/html' => 'html',
         'application/xhtml+xml' => 'html',
         'application/xml' => 'xml',
@@ -83,28 +83,16 @@ class Response
         'application/atom+xml' => 'atom',
         '*/*' => 'html',
         'default' => 'html',
-    ];
-
-    /**
-     * @return type
-     */
-    public static function getInstance()
-    {
-        if (empty(self::$instance)) {
-            return self::$instance = new self();
-        }
-
-        return self::$instance;
-    }
+    );
 
     /**
      * Sets up the response with a body and a status code.
      *
      * @param string $output
-     * @param int    $status
-     * @param array  $headers
+     * @param integer $status
+     * @param array $headers
      */
-    public function __construct($output = null, $status = 200, array $headers = [])
+    public function __construct($output = null, $status = 200, array $headers = array())
     {
         foreach ($headers as $header) {
             $this->addHeader($header);
@@ -116,8 +104,23 @@ class Response
     }
 
     /**
+     *
+     * @param type $header
+     * @return \Response
+     */
+    public function addHeader($name, $value, $replace = true)
+    {
+        if ($replace) {
+            $this->headers[$name] = $value;
+        } else {
+            $this->headers[] = array($name, $value);
+        }
+        return $this;
+    }
+
+    /**
      * Optionally send responses as if in CGI mode. (This changes how the
-     * status header is sent.).
+     * status header is sent.)
      *
      * @param bool $cgi True to force into CGI mode, false to not do so.
      *
@@ -125,34 +128,24 @@ class Response
      */
     public function setCgi($cgi)
     {
-        $this->cgi = (bool) $cgi;
-
+        $this->cgi = (boolean) $cgi;
         return $this;
     }
 
     /**
-     * Is the transport sending responses in CGI mode?
      *
-     * @return bool
+     * @return type
      */
-    public function isCgi()
+    public static function getInstance()
     {
-        return (bool) $this->cgi;
+        if (empty(self::$instance)) {
+            return self::$instance = new self();
+        }
+        return self::$instance;
     }
 
     /**
-     * @param type $status
      *
-     * @return Response
-     */
-    public function setStatus($status)
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
-    /**
      * @return type
      */
     public function getStatus()
@@ -161,15 +154,13 @@ class Response
     }
 
     /**
-     * Sets the HTTP status text for the message.
      *
-     * @param string $text The status text.
+     * @param type $status
+     * @return \Response
      */
-    public function setStatusText($text)
+    public function setStatus($status)
     {
-        $text = trim(str_replace(["\r", "\n"], '', $text));
-        $this->status_text = $text;
-
+        $this->status = $status;
         return $this;
     }
 
@@ -184,6 +175,20 @@ class Response
     }
 
     /**
+     *
+     * Sets the HTTP status text for the message.
+     *
+     * @param string $text The status text.
+     */
+    public function setStatusText($text)
+    {
+        $text = trim(str_replace(array("\r", "\n"), '', $text));
+        $this->status_text = $text;
+        return $this;
+    }
+
+    /**
+     *
      * @return type
      */
     public function headers()
@@ -192,43 +197,80 @@ class Response
     }
 
     /**
-     * @param type $header
      *
-     * @return Response
+     * @param type $name
+     * @return type
      */
-    public function addHeader($name, $value, $replace = true)
+    public function getHeader($name)
     {
-        if ($replace) {
-            $this->headers[$name] = $value;
-        } else {
-            $this->headers[] = [$name, $value];
+        if (!$this->hasHeader($name)) {
+            return null;
         }
+        return $this->headers[$name];
+    }
 
+    /**
+     * Check if response has a header
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function hasHeader($name)
+    {
+        return isset($this->headers[$name]);
+    }
+
+    /**
+     *
+     * @param type $content
+     * @return $this
+     */
+    public function setContent($content)
+    {
+        $this->output = $content;
         return $this;
     }
 
     /**
-     * @return type
+     * Sets HTTP response body. The parameter is automatically converted to JSON
+     *
+     * <code>
+     *    $response->setJsonContent(array("status" => "OK"));
+     * </code>
+     *
+     * @param mixed content
+     * @param int jsonOptions
+     * @return \Kazinduzi\Http\Response
      */
-    public function output($output = null)
+    public function setJsonContent($content, $jsonOptions = 0, $depth = 512)
     {
-        if ($output) {
-            $this->output = $output;
-            return $this;
-        }
+        $this->output = json_encode($content, $jsonOptions, $depth);
+        return $this;
+    }
 
-        return $this->output;
+    /**
+     *
+     * @param type $send_headers
+     */
+    public function send($send_headers = false)
+    {
+        if ($send_headers) {
+            $this->sendHeaders();
+        }
+        if ($this->output != null) {
+            echo $this->output;
+        }
     }
 
     /**
      * Sends the headers if they haven't already been sent.  Returns whether
      * they were sent or not.
      *
-     * @return bool
+     * @return  bool
      */
     public function sendHeaders()
     {
-        if (! headers_sent()) {
+        if (!headers_sent()) {
             if ($this->isCgi()) {
                 header('Status: ' . $this->status . ' ' . static::$statuses[$this->status]);
             } else {
@@ -243,24 +285,41 @@ class Response
                 is_string($name) && $value = "{$name}: {$value}";
                 header($value, true);
             }
-
             return true;
         }
-
         return false;
     }
 
     /**
-     * @param type $send_headers
+     * Is the transport sending responses in CGI mode?
+     *
+     * @return boolean
      */
-    public function send($send_headers = false)
+    public function isCgi()
     {
-        if ($send_headers) {
-            $this->sendHeaders();
+        return (bool) $this->cgi;
+    }
+
+    /**
+     *
+     * @return type
+     */
+    public function __toString()
+    {
+        return $this->output();
+    }
+
+    /**
+     *
+     * @return type
+     */
+    public function output($output = null)
+    {
+        if ($output) {
+            $this->output = $output;
+            return $this;
         }
-        if ($this->output != null) {
-            echo $this->output;
-        }
+        return $this->output;
     }
 
 }

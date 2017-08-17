@@ -1,6 +1,7 @@
 <?php
 
 defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
+
 /**
  * Kazinduzi Framework (http://framework.kazinduzi.com/).
  *
@@ -13,9 +14,8 @@ defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
  */
 class Inflector
 {
-    // Cached inflections
-    protected static $cache = [];
 
+    protected static $cache = [];
     protected static $irregular = [];
 
     /**
@@ -51,13 +51,13 @@ class Inflector
         $str = strtolower(trim($str));
 
         // Cache key name
-        $key = 'singular_'.$str.$count;
+        $key = 'singular_' . $str . $count;
 
-        if (isset(self::$cache[$key])) {
-            return self::$cache[$key];
+        if (isset(static::$cache[$key])) {
+            return static::$cache[$key];
         }
 
-        if ($irregular = array_search($str, self::$irregular)) {
+        if ($irregular = array_search($str, static::$irregular)) {
             $str = $irregular;
         } elseif (preg_match('/us$/', $str)) {
             // http://en.wikipedia.org/wiki/Plural_form_of_words_ending_in_-us
@@ -67,13 +67,13 @@ class Inflector
             $str = substr($str, 0, -2);
         } elseif (preg_match('/[^aeiou]ies$/', $str)) {
             // Replace "ies" with "y"
-            $str = substr($str, 0, -3).'y';
+            $str = substr($str, 0, -3) . 'y';
         } elseif (substr($str, -1) === 's' and substr($str, -2) !== 'ss') {
             // Remove singular "s"
             $str = substr($str, 0, -1);
         }
 
-        return self::$cache[$key] = $str;
+        return static::$cache[$key] = $str;
     }
 
     /**
@@ -109,15 +109,15 @@ class Inflector
         $str = strtolower(trim($str));
 
         // Cache key name
-        $key = 'plural_'.$str.$count;
+        $key = 'plural_' . $str . $count;
 
-        if (isset(self::$cache[$key])) {
-            return self::$cache[$key];
+        if (isset(static::$cache[$key])) {
+            return static::$cache[$key];
         }
 
 
-        if (isset(self::$irregular[$str])) {
-            $str = self::$irregular[$str];
+        if (isset(static::$irregular[$str])) {
+            $str = static::$irregular[$str];
         } elseif (preg_match('/[sxz]$/', $str) or preg_match('/[^aeioudgkprt]h$/', $str)) {
             $str .= 'es';
         } elseif (preg_match('/[^aeiou]y$/', $str)) {
@@ -127,7 +127,7 @@ class Inflector
             $str .= 's';
         }
         // Set the cache and return
-        return self::$cache[$key] = $str;
+        return static::$cache[$key] = $str;
     }
 
     /**
@@ -140,13 +140,13 @@ class Inflector
     public static function camelize($str)
     {
         // Cache key name
-        $key = 'camelize_'.$str;
-        if (isset(self::$cache[$key])) {
-            return self::$cache[$key];
+        $key = 'camelize_' . $str;
+        if (isset(static::$cache[$key])) {
+            return static::$cache[$key];
         }
         $str = str_replace(' ', '', ucwords(preg_replace('/[^A-Z^a-z^0-9]+/', ' ', $str)));
         // Set the cache and return
-        return self::$cache[$key] = $str;
+        return static::$cache[$key] = $str;
     }
 
     /**
@@ -159,13 +159,13 @@ class Inflector
      */
     public static function underscore($str)
     {
-        $key = 'underscore_'.$str;
-        if (isset(self::$cache[$key])) {
-            return self::$cache[$key];
+        $key = 'underscore_' . $str;
+        if (isset(static::$cache[$key])) {
+            return static::$cache[$key];
         }
         $str = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $class_name));
 
-        return self::$cache[$key] = $str;
+        return static::$cache[$key] = $str;
     }
 
     /**
@@ -175,10 +175,9 @@ class Inflector
      */
     public static function pathize($str)
     {
-        $key = 'pathize_'.$str;
+        $key = 'pathize_' . $str;
         $str = strtolower(preg_replace('/([a-z])([A-Z])/', '$1/$2', $str));
-
-        return self::$cache[$key] = $str;
+        return static::$cache[$key] = $str;
     }
 
     /**
@@ -193,10 +192,11 @@ class Inflector
      */
     public static function humanize($str, $uppercase = '')
     {
-        $key = 'humanize_'.$str;
+        $key = 'humanize_' . $str;
         $uppercase = $uppercase == 'all' ? 'ucwords' : 'ucfirst';
         $str = $uppercase(str_replace('_', ' ', preg_replace('/_id$/', '', $str)));
 
-        return self::$cache[$key] = $str;
+        return static::$cache[$key] = $str;
     }
+
 }

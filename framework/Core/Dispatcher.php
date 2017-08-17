@@ -37,8 +37,7 @@ class Dispatcher
      */
     public function dispatch()
     {
-        $frontCortroller = FrontController::getInstance();
-        $frontCortroller->setDIContainer($this->container);
+        $frontCortroller = new FrontController($this->container);        
         $frontCortroller->loadController();        
         $response = $frontCortroller->getCallableController()->run();
         $response->send(true);        

@@ -2,6 +2,9 @@
 
 namespace Kazinduzi\Core;
 
+use getallheaders;
+
+
 defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
 
 /**
@@ -31,32 +34,64 @@ class Request
             '*/*'                      => 'html',
             'default'                  => 'html',
         ];
+    
     private $getVars = [];
     private $postVars = [];
     private $serverVars = [];
+    private $cookies = [];
+    private $files = [];
+    private $content;
+    private $headerVars = [];    
     private $ipAddress = false;
     private $userAgent = false;
     private static $instance;
-
+    
     /**
-     * Get Singleton instance.
-     *
+     * Get Singleton instance
      * @return singleton Request Object
      */
     public static function getInstance()
     {
-        if (empty(self::$instance)) {
-            return self::$instance = new self();
+        if (empty(static::$instance)) {
+            return static::$instance = static::createFromGlobals();
         } else {
-            return self::$instance;
+            return static::$instance;
         }
+    }
+    
+    /**
+     * Creates a new request with values from PHP's super globals.
+     *
+     * @return Request A new request
+     */
+    public static function createFromGlobals()
+    {
+        // With the php's bug #66606, the php's built-in web server
+        // stores the Content-Type and Content-Length header values in
+        // HTTP_CONTENT_TYPE and HTTP_CONTENT_LENGTH fields.
+        if ('cli-server' === php_sapi_name()) {
+            if (array_key_exists('HTTP_CONTENT_LENGTH', $_SERVER)) {
+                $_SERVER['CONTENT_LENGTH'] = $_SERVER['HTTP_CONTENT_LENGTH'];
+            }
+            if (array_key_exists('HTTP_CONTENT_TYPE', $_SERVER)) {
+                $_SERVER['CONTENT_TYPE'] = $_SERVER['HTTP_CONTENT_TYPE'];
+            }
+        }
+        return new static($_GET, $_POST, $_COOKIE, $_FILES, $_SERVER);
     }
 
     /**
      * Constructor.
      */
-    public function __construct()
+    public function __construct(array $get = [], array $post = [], array $cookies = [], array $files = [], array $server = [], $content = null)
     {
+        $this->getVars = $get;
+        $this->postVars = $post;
+        $this->cookies = $cookies;
+        $this->files = $files;
+        $this->serverVars = $server;
+        $this->content = $content;
+        $this->headerVars = getallheaders();        
     }
 
     /**

@@ -11,6 +11,7 @@
  * @package   Kazinduzi
  */
 if (!function_exists('render')) {
+
     function render($template, $data = [])
     {
         extract($data, EXTR_SKIP | EXTR_REFS);
@@ -18,34 +19,38 @@ if (!function_exists('render')) {
             $$key = $value;
         }
         ob_start();
-        if (is_file($templateFile = THEME_PATH.DS.$template)) {
+        if (is_file($templateFile = THEME_PATH . DS . $template)) {
             require $templateFile;
-        } elseif (is_file($templateFile = KAZINDUZI_PATH.'/elements/layouts/'.$template)) {
+        } elseif (is_file($templateFile = KAZINDUZI_PATH . '/elements/layouts/' . $template)) {
             require $templateFile;
         }
         ob_end_flush();
     }
+
 }
 
 if (!function_exists('uses')) {
+
     function uses()
     {
         $args = func_get_args();
         foreach ($args as $arg) {
             $arg = strtolower($arg);
-            if (is_file($filename = KAZINDUZI_PATH.'/library/'.$arg.'.class.php')) {
+            if (is_file($filename = KAZINDUZI_PATH . '/library/' . $arg . '.class.php')) {
                 include $filename;
-            } elseif (is_file($filename = KAZINDUZI_PATH.'/helpers/'.$arg.'.class.php')) {
+            } elseif (is_file($filename = KAZINDUZI_PATH . '/helpers/' . $arg . '.class.php')) {
                 include $filename;
             } else {
                 throw new Exception("File {$filename} not found");
             }
         }
     }
+
 }
 
 
 if (!function_exists('arrayFirst')) {
+
     function arrayFirst($array)
     {
         if (is_array($array) && count($array) > 0) {
@@ -54,9 +59,11 @@ if (!function_exists('arrayFirst')) {
 
         return [];
     }
+
 }
 //
 if (!function_exists('arrayFlatten')) {
+
     function arrayFlatten($array)
     {
         $flatten = [];
@@ -73,35 +80,43 @@ if (!function_exists('arrayFlatten')) {
 
         return $flatten;
     }
+
 }
 
 //
 if (!function_exists('arrayToObject')) {
+
     function arrayToObject($array = [])
     {
         return (object) $array;
     }
+
 }
 //
 if (!function_exists('redirect')) {
+
     function redirect($url)
     {
         if (isset($_SESSION)) {
             session_write_close();
         }
-        header('Location:'.$url);
+        header('Location:' . $url);
         exit;
     }
+
 }
 
 if (!function_exists('stringEndsWith')) {
+
     function stringEndsWith($string, $end)
     {
         return substr($string, -strlen($end)) == $end;
     }
+
 }
 
 if (!function_exists('makeString')) {
+
     function makeString($string, $htmlize = false)
     {
         if (!empty($string)) {
@@ -112,15 +127,17 @@ if (!function_exists('makeString')) {
 
         return $string;
     }
+
 }
 
 if (!function_exists('singular')) {
+
     function singular($str)
     {
         $str = strtolower(trim($str));
         $end = substr($str, -3);
         if ($end == 'ies') {
-            $str = substr($str, 0, strlen($str) - 3).'y';
+            $str = substr($str, 0, strlen($str) - 3) . 'y';
         } elseif ($end == 'ses') {
             $str = substr($str, 0, strlen($str) - 2);
         } else {
@@ -132,17 +149,19 @@ if (!function_exists('singular')) {
 
         return $str;
     }
+
 }
 
 if (!function_exists('plural')) {
+
     function plural($str, $force = false)
     {
         $str = strtolower(trim($str));
         $end = substr($str, -1);
         if ($end == 'y') {
             // Y preceded by vowel => regular plural
-        $vowels = ['a', 'e', 'i', 'o', 'u'];
-            $str = in_array(substr($str, -2, 1), $vowels) ? $str.'s' : substr($str, 0, -1).'ies';
+            $vowels = ['a', 'e', 'i', 'o', 'u'];
+            $str = in_array(substr($str, -2, 1), $vowels) ? $str . 's' : substr($str, 0, -1) . 'ies';
         } elseif ($end == 's') {
             if ($force == true) {
                 $str .= 'es';
@@ -153,9 +172,11 @@ if (!function_exists('plural')) {
 
         return $str;
     }
+
 }
 
 if (!function_exists('random_element')) {
+
     function random_element($array)
     {
         if (!is_array($array)) {
@@ -164,9 +185,11 @@ if (!function_exists('random_element')) {
 
         return $array[array_rand($array)];
     }
+
 }
 
 if (!function_exists('get_request_method')) {
+
     function get_request_method()
     {
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
@@ -175,16 +198,20 @@ if (!function_exists('get_request_method')) {
             return $_SERVER['REQUEST_METHOD'];
         }
     }
+
 }
 
 if (!function_exists('isUTF8')) {
+
     function isUTF8($string)
     {
         return $string === '' || preg_match('/^./su', $string);
     }
+
 }
 
 if (!function_exists('escapeHtml')) {
+
     function escapeHtml($string)
     {
         static $htmlSpecialCharsFlags = ENT_QUOTES;
@@ -194,16 +221,20 @@ if (!function_exists('escapeHtml')) {
 
         return htmlspecialchars($string, $htmlSpecialCharsFlags, Kazinduzi\Core\Kazinduzi::$encoding);
     }
+
 }
 
 if (!function_exists('escapeUrl')) {
+
     function escapeUrl($string)
     {
         return rawurlencode($string);
     }
+
 }
 
 if (!function_exists('stripslashes_deep')) {
+
     function stripslashes_deep($values)
     {
         if (is_array($values)) {
@@ -216,6 +247,7 @@ if (!function_exists('stripslashes_deep')) {
 
         return $values;
     }
+
 }
 
 /*
@@ -224,6 +256,7 @@ if (!function_exists('stripslashes_deep')) {
  * @link http://us3.php.net/manual/en/security.magicquotes.disabling.php
  */
 if (get_magic_quotes_gpc()) {
+
     function UndoMagicQuotes($array, $deep = true)
     {
         $newArray = [];
@@ -247,8 +280,9 @@ if (get_magic_quotes_gpc()) {
     $_REQUEST = UndoMagicQuotes($_REQUEST);
 }
 
-if (!function_exists('put')) {
-    function put()
+if (!function_exists('http_put')) {
+
+    function http_put()
     {
         $_PUT = [];
         if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
@@ -264,10 +298,12 @@ if (!function_exists('put')) {
 
         return (array) $_PUT;
     }
+
 }
 
-if (!function_exists('delete')) {
-    function delete()
+if (!function_exists('http_delete')) {
+
+    function http_delete()
     {
         $delete = [];
         if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
@@ -284,29 +320,33 @@ if (!function_exists('delete')) {
 
         return (array) $delete;
     }
+
 }
 
 if (!function_exists('sanitize_input')) {
+
     function sanitize_input()
     {
         $_GET = clean_input_data($_GET);
         $_POST = clean_input_data($_POST);
-    //$_GET   = filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
-    //$_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-    // Clean $_COOKIE Data
-    // Also get rid of specially treated cookies that might be set by a server
-    // or silly application, that are of no use to a CI application anyway
-    // but that when present will trip our 'Disallowed Key Characters' alarm
-    // http://www.ietf.org/rfc/rfc2109.txt
-    // note that the key names below are single quoted strings, and are not PHP variables
-    unset($_COOKIE['$Version']);
+        //$_GET   = filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
+        //$_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        // Clean $_COOKIE Data
+        // Also get rid of specially treated cookies that might be set by a server
+        // or silly application, that are of no use to a CI application anyway
+        // but that when present will trip our 'Disallowed Key Characters' alarm
+        // http://www.ietf.org/rfc/rfc2109.txt
+        // note that the key names below are single quoted strings, and are not PHP variables
+        unset($_COOKIE['$Version']);
         unset($_COOKIE['$Path']);
         unset($_COOKIE['$Domain']);
         $_COOKIE = clean_input_data($_COOKIE);
     }
+
 }
 
 if (!function_exists('clean_input_data')) {
+
     function clean_input_data($str)
     {
         if (is_array($str)) {
@@ -317,17 +357,18 @@ if (!function_exists('clean_input_data')) {
 
             return $array;
         }
-    // We strip slashes if magic quotes is on to keep things consistent
-    if (get_magic_quotes_gpc()) {
-        $str = stripslashes($str);
-    }
-    // Standardize newlines
-    if (strpos($str, "\r") !== false) {
-        $str = str_replace(["\r\n", "\r"], "\n", $str);
-    }
+        // We strip slashes if magic quotes is on to keep things consistent
+        if (get_magic_quotes_gpc()) {
+            $str = stripslashes($str);
+        }
+        // Standardize newlines
+        if (strpos($str, "\r") !== false) {
+            $str = str_replace(["\r\n", "\r"], "\n", $str);
+        }
 
         return $str;
     }
+
 }
 
 /*
@@ -336,6 +377,7 @@ if (!function_exists('clean_input_data')) {
  * @return type
  */
 if (!function_exists('clean_input_keys')) {
+
     function clean_input_keys($str)
     {
         if (!preg_match("/^[a-z0-9:_\/-]+$/i", $str)) {
@@ -344,13 +386,16 @@ if (!function_exists('clean_input_keys')) {
 
         return $str;
     }
+
 }
 
 if (!function_exists('str_really_escape')) {
+
     function str_really_escape($str)
     {
         return str_replace(['%', '_', '\''], ['&#37;', '&#95;', '&#39;'], $str);
     }
+
 }
 
 if (!function_exists('xor_swap')) {
@@ -367,6 +412,22 @@ if (!function_exists('xor_swap')) {
             $x ^= $y;
         }
     }
+
+}
+
+if (!function_exists('getallheaders')) {
+
+    function getallheaders()
+    {
+        $headers = [];
+        foreach ($_SERVER as $name => $value) {
+            if (substr($name, 0, 5) == 'HTTP_') {
+                $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+            }
+        }
+        return $headers;
+    }
+
 }
 
 /*
@@ -377,6 +438,7 @@ if (!function_exists('xor_swap')) {
  * @see http://php.net/strtr
  */
 if (!function_exists('__')) {
+
     function __($string, array $values = null, $lang = 'en_US')
     {
         $I18n = new I18n();
@@ -387,25 +449,32 @@ if (!function_exists('__')) {
 
         return empty($values) ? $string : strtr($string, $values);
     }
+
 }
 
 if (!function_exists('_')) {
+
     function _($string, array $values = null, $lang = 'en_US')
     {
         return __($string, $values, $lang);
     }
+
 }
 
 if (!function_exists('__h')) {
+
     function __h($string)
     {
         return \framework\library\Xss::filter($string);
     }
+
 }
 
 if (!function_exists('h')) {
+
     function h($string)
     {
         return \Html::specialchars($string);
     }
+
 }

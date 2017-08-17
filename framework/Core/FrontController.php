@@ -20,20 +20,19 @@ use Kazinduzi\IoC\Container;
 use Kazinduzi\Core\Request;
 use Kazinduzi\Core\Response;
 
-class FrontController {
-
-     protected $container;
+class FrontController
+{
+    protected $container;
     private $controller;
     private $file;
     private $action;
     private $configs;
-    private $CallableController;
+    private $callableController;
     private $args = [];
     private $params = [];
-    private $Response;
-    private $Request;
-    private static $instance;
-
+    private $response;
+    private $request;
+    
     /**
      * Set DI Container.
      *
@@ -41,9 +40,9 @@ class FrontController {
      *
      * @return \FrontController
      */
-    public function setDIContainer(Container $container) {
+    public function setDIContainer(Container $container)
+    {
         $this->container = $container;
-
         return $this;
     }
 
@@ -52,26 +51,23 @@ class FrontController {
      *
      * @return Container
      */
-    public function getDIContainer() {
+    public function getDIContainer()
+    {
         return $this->container;
     }
 
-    public static function getInstance(array $options = []) {
-        if (empty(self::$instance)) {
-            return self::$instance = new static(Request::getInstance(), Response::getInstance(), $options);
-        }
-        return self::$instance;
-    }
-
     /**
-     * @param Request  $Request
-     * @param Response $Response
+     * Contructor
+     * 
+     * @param array $options
      */
-    public function __construct(Request $Request, Response $Response, array $options = []) {
-        $this->Request = $Request;
-        $this->Response = $Response;
+    public function __construct(Container $container, array $options = [])
+    {
+        $this->container = $container;
+        $this->request = $container->get('request');
+        $this->response = new Response();
         $this->configs = Kazinduzi::getConfig()->toArray();
-        $this->params = $this->Request->getParams();
+        $this->params = $this->request->getParams();
         if (empty($options)) {
             $this->checkRequestRoute();
         } else {
@@ -92,8 +88,9 @@ class FrontController {
      *
      * @return string
      */
-    private function parseRequestUri() {
-        $serverParams = $this->Request->serverParams();
+    private function parseRequestUri()
+    {
+        $serverParams = $this->request->serverParams();
 
         if (!isset($serverParams['REQUEST_URI'], $serverParams['SCRIPT_NAME'])) {
             return '';
@@ -133,7 +130,8 @@ class FrontController {
      *
      * @return type
      */
-    private function sanitizeRelativeDirectory($uri) {
+    private function sanitizeRelativeDirectory($uri)
+    {
         $tok = strtok($uri, '/');
         $uri = [];
         while ($tok !== false) {
@@ -149,7 +147,8 @@ class FrontController {
     /**
      * @return null
      */
-    private function checkRequestRoute() {
+    private function checkRequestRoute()
+    {
         if (Kazinduzi::$is_cli) {
             $protocol = 'cli';
             $options = Cli::options('route', 'method', 'get', 'post', 'referrer');
@@ -227,7 +226,8 @@ class FrontController {
     /**
      * @return \class|null
      */
-    public function loadController() {
+    public function loadController()
+    {
         $controller = $this->getController();
         if (empty($controller)) {
             header('HTTP/1.1 404 Not Found', 404);
@@ -240,9 +240,9 @@ class FrontController {
             exit(1);
         }
         $class = ucfirst($controller . 'Controller');
-        $this->CallableController = new $class($this->Request, $this->Response, $this->getDIContainer());
-        $this->CallableController->setController($controller);
-        if (!is_callable([$this->CallableController, $this->getAction()])) {
+        $this->callableController = new $class($this->request, $this->response, $this->getDIContainer());
+        $this->callableController->setController($controller);
+        if (! is_callable([$this->callableController, $this->getAction()])) {
             $error_data = [
                 'status' => 404,
                 'title' => _('Unknown action called!'),
@@ -252,8 +252,8 @@ class FrontController {
             render('error404.phtml', $error_data);
             exit(1);
         } else {
-            $this->CallableController->setAction($this->getAction());
-            $this->CallableController->setArgs(array_values($this->getArgs()));
+            $this->callableController->setAction($this->getAction());
+            $this->callableController->setArgs(array_values($this->getArgs()));
         }
 
         return $this;
@@ -262,8 +262,9 @@ class FrontController {
     /**
      * @return type
      */
-    public function getCallableController() {
-        return $this->CallableController;
+    public function getcallableController()
+    {
+        return $this->callableController;
     }
 
     /**
@@ -273,7 +274,8 @@ class FrontController {
      *
      * @return \FrontController
      */
-    public function setController($controller) {
+    public function setController($controller)
+    {
         $this->controller = $controller;
 
         return $this;
@@ -282,14 +284,16 @@ class FrontController {
     /**
      * @return type
      */
-    public function getController() {
+    public function getController()
+    {
         return $this->controller;
     }
 
     /**
      * @return type
      */
-    public function getControllerToPath() {
+    public function getControllerToPath()
+    {
         return Inflector::pathize($this->controller);
     }
 
@@ -300,7 +304,8 @@ class FrontController {
      *
      * @return \FrontController
      */
-    public function setAction($action) {
+    public function setAction($action)
+    {
         $this->action = $action;
         return $this;
     }
@@ -312,12 +317,12 @@ class FrontController {
      *
      * @return string
      */
-    public function getAction() {
+    public function getAction()
+    {
         $action = str_replace(['.', '-', '_'], ' ', $this->action);
         $action = ucwords($action);
         $action = str_replace(' ', '', $action);
         $action = lcfirst($action);
-
         return $action;
     }
 
@@ -328,35 +333,34 @@ class FrontController {
      *
      * @return \FrontController
      */
-    public function setArgs($args) {
+    public function setArgs($args)
+    {
         $this->args = $args;
-
         return $this;
     }
 
     /**
      * @return type
      */
-    public function getArgs() {
+    public function getArgs()
+    {
         return $this->args;
     }
 
     /**
      * @return type
      */
-    public function getRequest() {
-        return $this->Request;
+    public function getRequest()
+    {
+        return $this->request;
     }
 
     /**
      * @return type
      */
-    public function getResponse() {
-        return $this->Response;
+    public function getResponse()
+    {
+        return $this->response;
     }
 
-}
-
-final class NotFoundException extends \Exception {
-    
 }

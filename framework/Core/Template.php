@@ -1,4 +1,5 @@
 <?php
+
 namespace Kazinduzi\Core;
 
 use Kazinduzi\Templating\TemplatingEngine;
@@ -13,13 +14,14 @@ use Kazinduzi\Templating\TemplatingEngine;
  * @package   Kazinduzi
  */
 
-
 class Template
 {
+
     /**
      * @var type
      */
     private $data = [];
+
     /**
      * @var type
      */
@@ -29,6 +31,7 @@ class Template
      * @var \Theme
      */
     private $Theme;
+
     /**
      * @var type
      */
@@ -38,61 +41,81 @@ class Template
      * @var string
      */
     private $layoutFile;
+
     /**
      * @var string
      */
     private $viewSuffix = 'phtml';
+
     /**
      * @var string
      */
     private $layoutSuffix = 'phtml';
-    /**
-     * @var type
-     */
-    protected $FrontController;
     
+    /**
+     * @var Controller
+     */
+    protected $controller;
+
     /**
      * @var TemplingEngine
      */
     private $templatingEngine;
 
     /**
-     * Singleton for getting instance of the Template for kazinduzi action requested.
+     * Constructor of the template.
      *
-     * @return Template object
+     * @param string $file
+     * @param string $suffix
+     * @param array $data
      */
-    public static function getInstance($viewFile = null, $viewSuffix = null, array $viewData = [])
+    public function __construct($file = null, $suffix = null, array $data = null)
     {
-        return new static($viewFile, $viewSuffix, $viewData);
+        if ($suffix) {
+            $this->setViewSuffix($suffix);
+        }
+        if (null !== $file) {
+            $this->setFilename($file);
+        }
+        if (null !== $data) {
+            $this->data = $data + $this->data;
+        }
     }
 
-   /**
-    * Constructor of the template.
-    *
-    * @param string $file
-    * @param string $suffix
-    * @param array $data
-    */
-   public function __construct($file = null, $suffix = null, array $data = null)
-   {
-       if ($suffix) {
-           $this->setViewSuffix($suffix);
-       }
-       if (null !== $file) {
-           $this->setFilename($file);
-       }
-       if (null !== $data) {
-           $this->data = $data + $this->data;
-       }
-       $this->FrontController = FrontController::getInstance();
-   }
-   
-    public function setTemplatingEngine(TemplatingEngine $templatingEngine) 
+    /**
+     * Set calling controller
+     * 
+     * @param \Kazinduzi\Core\Controller $controller
+     * @return $this
+     */
+    public function setController(Controller $controller)
+    {
+        $this->controller = $controller;
+        return $this;
+    }
+
+    /**
+     * Get calling controller
+     * 
+     * @return Controller
+     */
+    public function getController()
+    {
+        return $this->controller;
+    }
+
+    /**
+     * Set templatingeEngine
+     * 
+     * @param TemplatingEngine $templatingEngine
+     * @return $this
+     */
+    public function setTemplatingEngine(TemplatingEngine $templatingEngine)
     {
         $this->templatingEngine = $templatingEngine;
         return $this;
     }
-    
+
     /**
      * Get TemplatingEngine
      * 
@@ -333,24 +356,23 @@ class Template
      * controller
      */
     public function render($filename = null, array $data = [])
-    {        
-        $viewFile = $this->FrontController->getAction();
+    {
+        $viewFile = $this->getController()->getAction();
         if (! $this->file) {
-            $controller_path = $this->FrontController->getControllerToPath();
-            $this->file = $controller_path.DIRECTORY_SEPARATOR.$viewFile.'.'.$this->getViewSuffix();
+            $controller_path = $this->getController()->getPath();
+            $this->file = $controller_path . DIRECTORY_SEPARATOR . $viewFile . '.' . $this->getViewSuffix();
         }
-        
+
         if ($data) {
             $this->data = $data;
         }
-                
+
         // Load Templating Engine
         if ($filename) {
             return $this->getTemplatingEngine()->render($filename, $this->data);
         }
-        
+
         return $this->getTemplatingEngine()->render($this->file, $this->data);
-        
     }
 
     /**
@@ -364,14 +386,14 @@ class Template
     {
         if ($this->getTheme()) {
             $theme_path = $this->getTheme()->getFileinfo()->getPathname();
-            $this->layoutFile = $theme_path.DS.$this->getLayout().'.'.$this->getLayoutSuffix();
+            $this->layoutFile = $theme_path . DS . $this->getLayout() . '.' . $this->getLayoutSuffix();
         } elseif (!is_file($this->layoutFile)) {
-            $this->layoutFile = LAYOUT_PATH.DS.$this->getLayout().'.'.$this->getLayoutSuffix();
+            $this->layoutFile = LAYOUT_PATH . DS . $this->getLayout() . '.' . $this->getLayoutSuffix();
         }
-        
+
         $this->content_for_layout = $this->render();
-        extract($this->data, EXTR_SKIP | EXTR_REFS);        
-        
+        extract($this->data, EXTR_SKIP | EXTR_REFS);
+
         ob_start();
         ob_implicit_flush(false);
         try {
@@ -381,7 +403,6 @@ class Template
             ob_end_clean();
             print_r($e);
         }
-        
     }
 
     /**
@@ -396,9 +417,9 @@ class Template
         }
         foreach ($this->cssStyles as $css) {
             if (is_array($css)) {
-                echo '<link rel="stylesheet" href="'.$css[0].'">'."\n";
+                echo '<link rel="stylesheet" href="' . $css[0] . '">' . "\n";
             } else {
-                echo '<link rel="stylesheet" href="'.$css.'">'."\n";
+                echo '<link rel="stylesheet" href="' . $css . '">' . "\n";
             }
         }
     }
@@ -415,10 +436,11 @@ class Template
         }
         foreach ($this->javascriptFiles as $js) {
             if (is_array($js)) {
-                echo '<script type="text/javascript" src="'.$js[0].'"></script>'."\n";
+                echo '<script type="text/javascript" src="' . $js[0] . '"></script>' . "\n";
             } else {
-                echo '<script type="text/javascript" src="'.$js.'"></script>'."\n";
+                echo '<script type="text/javascript" src="' . $js . '"></script>' . "\n";
             }
         }
     }
+
 }

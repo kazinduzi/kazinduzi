@@ -16,6 +16,8 @@ use Kazinduzi\Core\Kazinduzi;
 use Kazinduzi\Core\Dispatcher;
 use Kazinduzi\Templating\TwigEngine;
 use Kazinduzi\Core\Template;
+use Kazinduzi\Core\Request;
+use Kazinduzi\Core\Response;
 
 sanitize_input();
 Kazinduzi::init();
@@ -24,16 +26,23 @@ $container = new Container();
 $container['db'] = function() {
     return Kazinduzi::db();
 };
+
 $container['session'] = function() {
     return Kazinduzi::session();
 };
+
+$container['request'] = function() {
+    return Request::createFromGlobals();
+};
+
 $container['cache'] = function() {
     return Kazinduzi::cache();
 };
+
 $container['templating'] = function() {
-    $engine = new TwigEngine(APP_PATH . '/views');
+    $twig = new TwigEngine(APP_PATH . '/views');
     $template = new Template();
-    $template->setTemplatingEngine($engine);    
+    $template->setTemplatingEngine($twig);
     return $template;
 };
 

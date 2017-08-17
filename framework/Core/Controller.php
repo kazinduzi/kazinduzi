@@ -15,7 +15,8 @@ defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
 
 use Kazinduzi\IoC\Container;
 
-abstract class Controller {
+abstract class Controller
+{
 
     const DEFAULT_ACTION = 'index';
     const DEFAULT_CONTROLLER = 'index';
@@ -23,41 +24,45 @@ abstract class Controller {
     public $Request;
     public $Response;
     public $defaultAction = self::DEFAULT_ACTION;
-
-    private $_in_layout_display = true;
+    protected $_in_layout_display = true;
     private $action;
     private $controller;
     private $args;
     private $params;
-
     protected $registry = null;
     protected $methods = [];
     protected $models;
     protected $Template;
-
     private static $instance;
     private $container;
-
+        
     /**
-     * Method to get a singleton controller instance.
+     * Methot to construct the controller.
      *
-     * @param	string	The name for the controller.
-     *
-     * @return mixed Controller derivative class.
+     * @param Request  $Request
+     * @param Response $Response
      */
-    public static function getInstance($Request, $Response)
+    public function __construct(Request $Request = null, Response $Response = null, Container $container)
     {
-        $controllerClassName = get_called_class();
-        if (!empty(self::$instance)) {
-            return self::$instance;
+        $this->setDIContainer($container);
+        $this->Request = $Request instanceof Request ? $Request : Request::getInstance();
+        $this->params = $this->Request->getParams();
+        $this->Response = $Response instanceof Response ? $Response : Response::getInstance();
+        $this->Template = $container->get('templating');
+        $this->Template->setController($this);
+        // Get the public methods in this class.
+        $reflector = new \ReflectionClass($this);
+        // $reflectorName = $reflector->getName();
+        $reflectorMethods = $reflector->getMethods(\ReflectionMethod::IS_PUBLIC);
+        foreach ($reflectorMethods as $reflectorMethod) {
+            $methodName = $reflectorMethod->getName();
+            if (!in_array($methodName, get_class_methods(self::class)) || $methodName === self::DEFAULT_ACTION) {
+                $this->methods[] = $methodName;
+            }
         }
-        if ($Request instanceof Request && $Response instanceof Response) {
-            return self::$instance = new $controllerClassName($Request, $Response);
-        } else {
-            return self::$instance = new $controllerClassName();
-        }
+        $this->init();
     }
-
+    
     /**
      * Set DI Container.
      *
@@ -79,37 +84,12 @@ abstract class Controller {
     }
 
     /**
-     * Methot to construct the controller.
-     *
-     * @param Request  $Request
-     * @param Response $Response
-     */
-    public function __construct(Request $Request = null, Response $Response = null, Container $container)
-    {
-        $this->setDIContainer($container);
-        $this->Request = $Request instanceof Request ? $Request : Request::getInstance();
-        $this->params = $this->Request->getParams();
-        $this->Response = $Response instanceof Response ? $Response : Response::getInstance();
-        $this->Template = $container->get('templating');
-        // Get the public methods in this class.
-        $reflector = new \ReflectionClass($this);
-        // $reflectorName = $reflector->getName();
-        $reflectorMethods = $reflector->getMethods(\ReflectionMethod::IS_PUBLIC);
-        foreach ($reflectorMethods as $reflectorMethod) {
-            $methodName = $reflectorMethod->getName();
-            if (!in_array($methodName, get_class_methods(self::class)) || $methodName === self::DEFAULT_ACTION) {
-                $this->methods[] = $methodName;
-            }
-        }
-        $this->init();
-    }
-
-    /**
      * All controllers must contain an index method.
      */
     abstract public function index();
 
-    public function init() {
+    public function init()
+    {
         
     }
 
@@ -121,6 +101,7 @@ abstract class Controller {
      */
     public function before()
     {
+        
     }
 
     /**
@@ -132,6 +113,7 @@ abstract class Controller {
      */
     public function after()
     {
+        
     }
 
     /**
@@ -216,7 +198,8 @@ abstract class Controller {
      *
      * @return \Controller
      */
-    public function setAction($action) {
+    public function setAction($action)
+    {
         $this->action = $action;
 
         return $this;
@@ -225,7 +208,8 @@ abstract class Controller {
     /**
      * @return type
      */
-    public function getAction() {
+    public function getAction()
+    {
         if ($this->action) {
             return $this->action;
         }
@@ -236,7 +220,8 @@ abstract class Controller {
      *
      * @return \Controller
      */
-    public function setArgs($args) {
+    public function setArgs($args)
+    {
         $this->args = $args;
         return $this;
     }
@@ -244,7 +229,8 @@ abstract class Controller {
     /**
      * @return type
      */
-    public function getArgs() {
+    public function getArgs()
+    {
         return $this->args;
     }
 
@@ -253,7 +239,8 @@ abstract class Controller {
      *
      * @return mixed
      */
-    public function getArg($index = 0) {
+    public function getArg($index = 0)
+    {
         if (!isset($this->args[$index])) {
             return;
         }
@@ -265,7 +252,8 @@ abstract class Controller {
      *
      * @return Request
      */
-    public function getRequest() {
+    public function getRequest()
+    {
         return $this->Request ? $this->Request : Request::getInstance();
     }
 
@@ -274,7 +262,8 @@ abstract class Controller {
      *
      * @return Response
      */
-    public function getResponse() {
+    public function getResponse()
+    {
         return $this->Response ? $this->Response : Response::getInstance();
     }
 
@@ -284,7 +273,8 @@ abstract class Controller {
      *
      * @return type
      */
-    protected function createModel($name, $config = []) {
+    protected function createModel($name, $config = [])
+    {
         $modelName = preg_replace('/[^A-Z0-9_]/i', '', $name);
         return $result = Model::getInstance($modelName, $config);
     }
@@ -295,7 +285,8 @@ abstract class Controller {
      *
      * @return \Model
      */
-    public function getModel($name = '', $config = []) {
+    public function getModel($name = '', $config = [])
+    {
         if (empty($name)) {
             $name = $this->getName();
         }
@@ -306,7 +297,8 @@ abstract class Controller {
      * @param type $url
      * @param type $status
      */
-    public function redirect($url, $status = 302) {
+    public function redirect($url, $status = 302)
+    {
         header('Status: ' . $status);
         header('Location: ' . str_replace('&amp;', '&', $url));
         exit();
@@ -315,7 +307,8 @@ abstract class Controller {
     /**
      * @return type
      */
-    public function getName() {
+    public function getName()
+    {
         if (!$this->name) {
             $r = null;
             if (!preg_match('/(.*)Controller/i', get_class($this), $r)) {
@@ -325,7 +318,7 @@ abstract class Controller {
         }
         return $this->name;
     }
-
+    
     /**
      * Execute the requested action
      * First check if the methods {before &| after} are present for this action.
@@ -333,14 +326,13 @@ abstract class Controller {
      * - $this->before(),
      * - $this->executeAction(),
      * - $this->after().
-     *
+     * 
      * @param string $action
-     *
-     * @throws Exception
-     *
-     * @return void
+     * @return Response
+     * @throws \Kazinduzi\Core\Exception
      */
-    public function executeAction($action) {
+    public function executeAction($action)
+    {
         try {
             $this->before();
             $this->Response = $this->{$action}($this->getArgs());
@@ -358,22 +350,22 @@ abstract class Controller {
      *
      * @return void
      */
-    public function run() {
+    public function run()
+    {
         try {
             $response = $this->executeAction($this->getAction());
-            
+
             if ($this->isLayoutDisplayed()) {
                 $response = $this->getTemplate()->display();
             }
-                        
+
             if ($response instanceof Response) {
                 return $response;
             }
-            
+
             if (is_string($response)) {
                 return new Response($response);
             }
-            
         } catch (Exception $e) {
             throw $e;
         }
@@ -382,7 +374,8 @@ abstract class Controller {
     /**
      * @return type
      */
-    protected function isLayoutDisplayed() {
+    protected function isLayoutDisplayed()
+    {
         return $this->_in_layout_display === true;
     }
 
@@ -391,7 +384,8 @@ abstract class Controller {
      *
      * @return \Controller
      */
-    protected function setLayoutDisplayed($flag = true) {
+    protected function setLayoutDisplayed($flag = true)
+    {
         $this->_in_layout_display = (bool) $flag;
 
         return $this;
@@ -403,7 +397,8 @@ abstract class Controller {
      *
      * @return void
      */
-    private function __clone() {
+    private function __clone()
+    {
         
     }
 
@@ -413,7 +408,8 @@ abstract class Controller {
      * @param string $key
      * @param mixed  $value
      */
-    public function __set($key, $value) {
+    public function __set($key, $value)
+    {
         $this->getTemplate()->__set($key, $value);
     }
 
@@ -424,7 +420,8 @@ abstract class Controller {
      *
      * @return mixed | null
      */
-    public function __get($key) {
+    public function __get($key)
+    {
         return $this->getTemplate()->__get($key);
     }
 
@@ -435,7 +432,8 @@ abstract class Controller {
      *
      * @return mixed
      */
-    public function __isset($name) {
+    public function __isset($name)
+    {
         return $this->getTemplate()->__isset($name);
     }
 
@@ -446,7 +444,8 @@ abstract class Controller {
      *
      * @return void
      */
-    public function __unset($name) {
+    public function __unset($name)
+    {
         $this->getTemplate()->__unset($name);
     }
 
@@ -455,12 +454,23 @@ abstract class Controller {
      *
      * @return void
      */
-    protected function disableCache() {
+    protected function disableCache()
+    {
         header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
         header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
         header('Cache-Control: no-store, no-cache, must-revalidate');
         header('Cache-Control: post-check=0, pre-check=0', false);
         header('Pragma: no-cache');
+    }
+    
+    /**
+     * Get controller path
+     * 
+     * @return string
+     */
+    public function getPath()
+    {
+        return \Inflector::pathize($this->getName());
     }
 
     /**
@@ -470,7 +480,8 @@ abstract class Controller {
      * @param array $data
      * @return string
      */
-    protected function render($template = null, array $data = []) {
+    protected function render($template = null, array $data = [])
+    {
         return $this->Template->render($template, $data);
     }
 
