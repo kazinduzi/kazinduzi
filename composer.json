@@ -13,9 +13,9 @@
 	},
 	
 	"require-dev": {
-        "codeception/codeception" : "2.3.5",
-		"phpunit/dbunit": "^3.0",
-		"squizlabs/php_codesniffer": "2.*"
+		"phpunit/phpunit": "^6.3",
+        "phpunit/dbunit": "^3.0",
+		"squizlabs/php_codesniffer": "2.*"		
     },
 	
 	"config": {
