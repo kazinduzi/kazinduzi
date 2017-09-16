@@ -157,22 +157,22 @@ abstract class KazinduziBase
      */
     public static function init()
     {
-        if (self::$init) {
+        if (static::$init) {
             // Do not allow execution twice
             return;
         }
         /*
          * Kazinduzi is now initialized
          */
-        self::$init = true;
+        static::$init = true;
         /*
          * Fetch the main configuration data and set the $config variable
          */
-        self::$config = !self::$config ? self::config() : self::$config;
+        static::$config = !static::$config ? static::config() : static::$config;
         /*
          * Convert config to Array of configs
          */
-        $config = self::$config->as_array();
+        $config = static::$config->as_array();
         /*
          * This constant defines whether the application should be in debug mode or not. Defaults to false.
          */
@@ -185,57 +185,57 @@ abstract class KazinduziBase
          * Set default language
          */
         if (isset($config['lang'])) {
-            self::$language = $config['lang'];
+            static::$language = $config['lang'];
         }
         /*
          * Set Application name
          */
         if (isset($config['Application.name'])) {
-            self::setAppName($config['Application.name']);
+            static::setAppName($config['Application.name']);
         }
         /*
          *
          */
         if (isset($config['charset'])) {
             // Set the encoding charset
-            self::setCharset($config['charset']);
+            static::setCharset($config['charset']);
         }
         /*
          *
          */
         if (ini_get('register_globals')) {
             // Reverse the effects of register_globals
-            self::globals();
+            static::globals();
         }
         /*
          * Determine if we are running in a command line environment
          */
-        self::$is_cli = (PHP_SAPI === 'cli');
+        static::$is_cli = (PHP_SAPI === 'cli');
         /*
          * Determine if we are running in a Windows environment
          */
-        self::$is_windows = (DIRECTORY_SEPARATOR === '\\');
+        static::$is_windows = (DIRECTORY_SEPARATOR === '\\');
 
         /*
          * Determine if we are running in a Windows environment
          */
-        self::$is_unix = (DIRECTORY_SEPARATOR === '\/');
+        static::$is_unix = (DIRECTORY_SEPARATOR === '\/');
 
         /*
          * Determine if we are running in safe mode
          */
-        self::$safe_mode = (bool) ini_get('safe_mode');
+        static::$safe_mode = (bool) ini_get('safe_mode');
 
         if (function_exists('mb_internal_encoding')) {
-            mb_internal_encoding(self::getCharset());
+            mb_internal_encoding(static::getCharset());
         }
 
         /*
          * Using UTF-8 for everything.
          */
         if (function_exists('iconv_set_encoding') && version_compare(PHP_VERSION, '5.0.6') < 0) {
-            iconv_set_encoding('internal_encoding', self::getCharset());
-            iconv_set_encoding('output_encoding', self::getCharset());
+            iconv_set_encoding('internal_encoding', static::getCharset());
+            iconv_set_encoding('output_encoding', static::getCharset());
         } else {
             ini_set('default_charset', 'UTF-8');
         }
@@ -245,9 +245,9 @@ abstract class KazinduziBase
          */
         isset($config['date.timezone']) ?
         // If date.timezone is set in the configuration, affect it to the app.
-        self::setTimeZone($config['date.timezone']) :
+        static::setTimeZone($config['date.timezone']) :
         // Else set system timezone to UTC timezone as default
-        self::setTimeZone('UTC');
+        static::setTimeZone('UTC');
         unset($config);
     }
 
@@ -281,11 +281,11 @@ abstract class KazinduziBase
     public static function getAppName()
     {
         $mainConfig = static::getConfig();
-        if (empty(self::$title)) {
-            self::$title = $mainConfig['Application.name'];
+        if (empty(static::$title)) {
+            static::$title = $mainConfig['Application.name'];
         }
 
-        return isset(self::$title) ? self::$title : 'Kazinduzi, the PHP web application framework';
+        return isset(static::$title) ? static::$title : 'Kazinduzi, the PHP web application framework';
     }
 
     /**
@@ -293,7 +293,7 @@ abstract class KazinduziBase
      */
     public static function setAppName($name)
     {
-        self::$title = empty($name) ? 'Kazinduzi, the PHP web application framework' : $name;
+        static::$title = empty($name) ? 'Kazinduzi, the PHP web application framework' : $name;
     }
 
     /**
@@ -301,9 +301,9 @@ abstract class KazinduziBase
      */
     public static function session()
     {
-        session_name(self::getConfig('session')->get('session_name'));
+        session_name(static::getConfig('session')->get('session_name'));
 
-        return Session::instance(self::getConfig('session')->get('type'));
+        return Session::instance(static::getConfig('session')->get('type'));
     }
 
     /**
@@ -347,10 +347,10 @@ abstract class KazinduziBase
     {
         if (is_string(strtolower($arg)) and class_exists($arg, $autoload = true)) {
             $class = ucfirst($arg);
-            if (empty(self::$instances[$arg])) {
-                return self::$instances[$arg] = is_subclass_of($class, 'Model') ? $class::model() : new $class();
+            if (empty(static::$instances[$arg])) {
+                return static::$instances[$arg] = is_subclass_of($class, 'Model') ? $class::model() : new $class();
             } else {
-                return self::$instances[$arg];
+                return static::$instances[$arg];
             }
         }
     }
@@ -377,7 +377,7 @@ abstract class KazinduziBase
      */
     public static function getConfig($group = null)
     {
-        return self::$config = Config::instance($group);
+        return static::$config = Config::instance($group);
     }
 
     /**
@@ -389,7 +389,7 @@ abstract class KazinduziBase
      */
     public static function config($group = null)
     {
-        return self::$config = Config::instance($group);
+        return static::$config = Config::instance($group);
     }
 
     /**
@@ -425,7 +425,7 @@ abstract class KazinduziBase
      */
     public static function version()
     {
-        return self::VERSION;
+        return static::VERSION;
     }
 
     /**
@@ -473,7 +473,7 @@ abstract class KazinduziBase
      */
     public static function setCharset($charset = 'UTF-8')
     {
-        self::$encoding = $charset;
+        static::$encoding = $charset;
     }
 
     /**
@@ -481,7 +481,7 @@ abstract class KazinduziBase
      */
     public static function getCharset()
     {
-        return self::$encoding;
+        return static::$encoding;
     }
 
     /**
