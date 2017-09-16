@@ -23,8 +23,9 @@ class KazinduziTest extends TestCase
      */
     public function testAppName()
     {
+        Kazinduzi::setAppName('KazinduziTest');
         $defAppName = Kazinduzi::getAppName();
-        $this->assertEquals('Kazinduzi', $defAppName);
+        $this->assertEquals('KazinduziTest', $defAppName);
     }
 
     /**
