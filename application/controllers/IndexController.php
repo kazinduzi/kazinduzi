@@ -17,6 +17,6 @@ class IndexController extends \Kazinduzi\Core\Controller
     public function index()
     { 
         $this->_in_layout_display = false;
-        return new Response('fssfsfsfsf');
+        return new Response('Greetings from Kazinduzi! Hello World!');
     }
 }
