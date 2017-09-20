@@ -1,0 +1,61 @@
+version: '3'
+
+services:    
+  web:
+    build: ./nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+    links:
+      - php    
+    volumes:
+      - ./logs/nginx:/var/log/nginx
+      - ./nginx/etc/conf.d:/etc/nginx/conf.d
+      - ./data/web:/var/www/html:rw
+    
+  php:
+    build: ./php7-fpm
+    container_name: php
+    ports:
+      - "9000:9000"
+    links:
+      - redis
+      - db
+    volumes:
+      - ./data/web/:/var/www/html
+      - ./logs/php:/var/log/php
+      
+  db:
+    image: mysql
+    container_name: ${MYSQL_HOST}
+    restart: always
+    env_file:
+      - ".env"
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - 3306:3306
+    volumes:
+      - ./data/db/mysql:/var/lib/mysql
+  
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    depends_on:
+        - db
+    ports:
+      - "8081:80"
+    links:
+      - db
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+        - 6379:6379
+    volumes:
+        - ./data/redis:/data
