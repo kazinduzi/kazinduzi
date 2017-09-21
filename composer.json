@@ -22,6 +22,6 @@
         "optimize-autoloader": true
     },	
     "autoload": {
-        "classmap": ["application/controllers/"]
+        "classmap": ["application/"]
     }
 }
