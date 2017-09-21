@@ -20,5 +20,8 @@
 	
      "config": {
         "optimize-autoloader": true
-     }
+     },
+	 "autoload": {
+        "classmap": ["application/controllers/", "application/models/", "lib/", "Something.php"]
+    }
 }
