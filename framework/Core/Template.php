@@ -142,7 +142,7 @@ class Template
     }
 
     /**
-     * Get the path of the viewpath.
+     * Get template filename.
      *
      * @return string
      */
@@ -406,7 +406,7 @@ class Template
     }
 
     /**
-     * Method to append the CSS stylesheets.
+     * Method to append the CSS.
      *
      * @return string
      */

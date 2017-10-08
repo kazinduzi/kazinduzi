@@ -24,7 +24,8 @@ class DefaultController extends Controller
      */
     public function index()
     {       
-        //$templating = $this->getDIContainer()->get('templating');
+        $templating = $this->getDIContainer()->get('templating');
+        dump($templating->getController());
         //print_r($this);
         $this->setLayout('default/default');        
         $this->title = __('messages.welcome');

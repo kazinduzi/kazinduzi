@@ -30,9 +30,7 @@ abstract class Controller
     protected $controller;
     protected $args;
     protected $params;
-    protected $registry = null;
-    protected $methods = [];
-    protected $models;
+    protected $methods = [];    
     protected $Template;    
     protected $container;
         
