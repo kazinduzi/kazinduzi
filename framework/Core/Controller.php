@@ -14,30 +14,30 @@ defined('KAZINDUZI_PATH') || exit('No direct script access allowed');
  */
 
 use Kazinduzi\IoC\Container;
+use Inflector;
 
 abstract class Controller
 {
 
     const DEFAULT_ACTION = 'index';
-    const DEFAULT_CONTROLLER = 'index';
+    const DEFAULT_CONTROLLER = 'Index';
 
     public $Request;
     public $Response;
     public $defaultAction = self::DEFAULT_ACTION;
     protected $_in_layout_display = true;
-    private $action;
-    private $controller;
-    private $args;
-    private $params;
+    protected $action;
+    protected $controller;
+    protected $args;
+    protected $params;
     protected $registry = null;
     protected $methods = [];
     protected $models;
-    protected $Template;
-    private static $instance;
-    private $container;
+    protected $Template;    
+    protected $container;
         
     /**
-     * Methot to construct the controller.
+     * Constructor the controller.
      *
      * @param Request  $Request
      * @param Response $Response
@@ -88,6 +88,9 @@ abstract class Controller
      */
     abstract public function index();
 
+    /**
+     * Initialize
+     */
     public function init()
     {
         
@@ -254,7 +257,7 @@ abstract class Controller
      */
     public function getRequest()
     {
-        return $this->Request ? $this->Request : Request::getInstance();
+        return $this->Request ? $this->Request : $this->container->get('request');
     }
 
     /**
@@ -264,34 +267,8 @@ abstract class Controller
      */
     public function getResponse()
     {
-        return $this->Response ? $this->Response : Response::getInstance();
-    }
-
-    /**
-     * @param type $name
-     * @param type $config
-     *
-     * @return type
-     */
-    protected function createModel($name, $config = [])
-    {
-        $modelName = preg_replace('/[^A-Z0-9_]/i', '', $name);
-        return $result = Model::getInstance($modelName, $config);
-    }
-
-    /**
-     * @param string $name
-     * @param array  $config
-     *
-     * @return \Model
-     */
-    public function getModel($name = '', $config = [])
-    {
-        if (empty($name)) {
-            $name = $this->getName();
-        }
-        return $this->createModel($name, $config);
-    }
+        return $this->Response;
+    }    
 
     /**
      * @param type $url
@@ -390,17 +367,7 @@ abstract class Controller
 
         return $this;
     }
-
-    /**
-     * Prevent cloning the controller
-     * Declaring this magic method __clone will prevent all attempt to clone this.
-     *
-     * @return void
-     */
-    private function __clone()
-    {
-        
-    }
+  
 
     /**
      * Magic set data of the controller.
@@ -470,7 +437,7 @@ abstract class Controller
      */
     public function getPath()
     {
-        return \Inflector::pathize($this->getName());
+        return Inflector::pathize($this->getName());
     }
 
     /**

@@ -80,7 +80,7 @@ if (is_file(__DIR__.'/INSTALL_LOCK')) {
  */
 $session = Kazinduzi::session();
 $session->start();
-require_once APP_PATH . '/bootstrap.php';
+require APP_PATH . '/bootstrap.php';
 
 $db = Database::getInstance();
 $db->select('*')->from('kazinduzi')->where('ip_adress = \'192.168.1.28\'')->buildQuery();

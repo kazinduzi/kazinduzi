@@ -19,12 +19,13 @@ class DefaultController extends Controller
 {
     
     /**
-     * 
+     * IndexAction
      * @return type
      */
     public function index()
     {       
         //$templating = $this->getDIContainer()->get('templating');
+        //print_r($this);
         $this->setLayout('default/default');        
         $this->title = __('messages.welcome');
         $this->content = 'Welcome to Kazinduzi framework v' . Kazinduzi::version();        
@@ -33,7 +34,7 @@ class DefaultController extends Controller
     }
 
     /**
-     * 
+     * TestAction
      */
     public function test()
     {

@@ -3,7 +3,7 @@
 use Kazinduzi\Core\Response;
 
 /**
- * Description of IndexController
+ * IndexController
  *
  * @author Emmanuel Ndayiragije <endayiragije@gmail.com>
  */
